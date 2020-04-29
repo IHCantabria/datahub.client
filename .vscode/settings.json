@@ -1,0 +1,62 @@
+{
+    "editor.rulers": [90],
+    "editor.formatOnSave": false,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 90,    
+    "javascript.format.enable": false,
+    "eslint.autoFixOnSave": true,    
+    "eslint.options": {
+        "extensions": [".html", ".js", ".vue", ".jsx"]
+    },
+    "eslint.validate": [{
+            "language": "vue",
+            "autoFix": true
+        },
+        {
+            "language": "html",
+            "autoFix": true
+        },
+        {
+            "language": "javascript",
+            "autoFix": true
+        },
+        {
+            "language": "javascriptreact",
+            "autoFix": true
+        }
+    ],
+    "prettier.eslintIntegration": true,
+    "vetur.validation.style": false,
+    "vetur.format.options.useTabs": false,
+    "vetur.format.defaultFormatter.less": "prettier",
+    "vetur.format.defaultFormatter.postcss": "prettier",
+    "vetur.format.defaultFormatter.scss": "none",
+    "vetur.format.defaultFormatter.js": "prettier-eslint",
+    "vetur.format.defaultFormatter.html": "prettyhtml",
+    "vetur.format.defaultFormatterOptions": {
+        "prettyhtml": {
+            "printWidth": 90,
+            "singleQuote": false,
+            "wrapAttributes": true,
+            "sortAttributes": false
+        }
+    },
+    "git.alwaysShowStagedChangesResourceGroup": true,
+    "todo-tree.general.rootFolder": "${workspaceFolder}/src",
+    "scss.validate": false,
+    "css.validate": false,
+    "less.validate": false,
+
+    "python.pythonPath": "env/bin/python",
+    "pythonTestExplorer.testFramework": "unittest",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": true
+}

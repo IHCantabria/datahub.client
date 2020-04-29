@@ -1,0 +1,43 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "vscode-jest-tests",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "./node_modules/@vue/cli-service/bin/vue-cli-service.js",
+                "test:unit",
+                "--runInBand"
+            ],
+            "cwd": "${workspaceFolder}",
+            "protocol": "inspector",
+            "disableOptimisticBPs": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "outFiles": [
+                "${workspaceFolder}/src/**/*.js"
+            ],
+            "port": 9229
+        },
+        {
+            "name": "Python: Flask",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "FICHERO-APP.py",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "0",
+                "FLASK_RUN_PORT": 5050
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload"
+            ],
+            "jinja": true
+        }
+    ]
+}
