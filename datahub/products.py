@@ -1,10 +1,13 @@
 import json
 import requests
 
+from datahub.config import Config
+
 
 class Products(object):
-    def __init__(self, url):
-        self.url = url
+    def __init__(self):
+        configuration = Config()
+        self.url = configuration.URLs["products"]
 
     def get_all(self, lon_min=None, lat_min=None, lon_max=None, lat_max=None):
         params = self._set_filters(lon_min, lat_min, lon_max, lat_max)
