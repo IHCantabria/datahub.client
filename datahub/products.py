@@ -9,6 +9,20 @@ class Products(object):
         configuration = Config()
         self.url = configuration.URLs["products"]
 
+    def get(self, id_product):
+        url_products = f"{self.url}/{id_product}"
+
+        response = requests.get(url_products)
+        if response.ok:
+            data = json.loads(response.content)
+        else:
+            raise response.raise_for_status()
+        try:
+            product_json = data[0]
+            return product_json
+        except IndexError:
+            return None
+
     def get_all(self, lon_min=None, lat_min=None, lon_max=None, lat_max=None):
         params = self._set_filters(lon_min, lat_min, lon_max, lat_max)
 

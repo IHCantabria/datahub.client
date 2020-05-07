@@ -3,6 +3,18 @@ from datahub.products import Products
 
 
 class TestProducts(unittest.TestCase):
+    def test_get_product(self):
+        id = 7
+        p = Products()
+        product = p.get(id)
+        self.assertEqual(id, product["id"])
+
+    def test_get_product_invalid_id(self):
+        id = -5
+        p = Products()
+        product = p.get(id)
+        self.assertIsNone(product)
+
     def test_get_all(self):
         expected_result = 172
         p = Products()
