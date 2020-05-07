@@ -39,6 +39,16 @@ class Products(object):
             raise response.raise_for_status()
         return data
 
+    def get_variables(self, id_product):
+        url_products = f"{self.url}/{id_product}/Variables"
+
+        response = requests.get(url_products)
+        if response.ok:
+            data = json.loads(response.content)
+        else:
+            raise response.raise_for_status()
+        return data
+
     def _set_filters(self, lon_min, lat_min, lon_max, lat_max):
         params = []
         if lon_min is not None:

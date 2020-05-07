@@ -36,6 +36,20 @@ class TestProducts(unittest.TestCase):
         with self.assertRaises(Exception):
             p.get_all(lon_min=-10, lon_max=0, lat_max=50)
 
+    def test_get_variables(self):
+        id = 7
+        p = Products()
+        variables = p.get_variables(id)
+        n = len(variables)
+        self.assertEqual(n, 5)
+
+    def test_get_variables_no_product(self):
+        id = -5
+        p = Products()
+        variables = p.get_variables(id)
+        n = len(variables)
+        self.assertEqual(n, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
