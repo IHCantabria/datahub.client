@@ -63,7 +63,7 @@ black: venv
 
 radon: venv
 	source ${VENV_ACTIVATE}
-	python -m radon cc devices_on_network.py src
+	python -m radon cc $(shell git ls-files | grep -e .py;git ls-files --others --exclude-standard | grep -e .py)
 
 release: venv black radon test
 	source ${VENV_ACTIVATE}

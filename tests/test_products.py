@@ -20,21 +20,25 @@ class TestProducts(unittest.TestCase):
         p = Products()
         product = p.get_by_name_alias(name)
         self.assertIsNotNone(product)
+
     def test_get_product_by_name_ko(self):
         name = "FAKE_GLOBAL_REANALYSIS_PHY_001_030"
         p = Products()
         product = p.get_by_name_alias(name)
         self.assertIsNone(product)
+
     def test_get_product_by_alias(self):
         alias = "GLOBAL REANALYSIS PHY 001 030"
         p = Products()
         product = p.get_by_name_alias(alias)
         self.assertIsNotNone(product)
+
     def test_get_product_by_alias_ko(self):
         alias = "FAKE GLOBAL REANALYSIS PHY 001 030"
         p = Products()
         product = p.get_by_name_alias(alias)
         self.assertIsNone(product)
+
     def test_get_all(self):
         expected_result = 172
         p = Products()

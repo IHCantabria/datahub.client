@@ -5,18 +5,66 @@ import csv
 from io import StringIO
 from datahub import Conf
 
-class ProductThredds():
-    def __init__(self, datahub_product):
-        self.datahub_product = datahub_product
-    def get_data(self):
-       # Obtener  latestNcssUrl __getLatestNcssUrl
-       latestNcssUrl = self._getLatestNcssUrl()
-       return latestNcssUrl
+
+class Product(object):
+    id = None
+    extent = None
+    geometry = None
+    name = None
+    alias = None
+    temporalResolutionHours = None
+    spatialResolutionLonDegrees = None
+    spatialResolutionLatDegrees = None
+    spatialResolutionLonKm2 = None
+    spatialResolutionLatKm2 = None
+    added = None
+    addedBy = None
+    productFormat = None
+    timeHorizon = None
+    idSource = None
+    active = None
+    idProductType = None
+    urlProduct = None
+    license = None
+    graphic = None
+    mercurio = None
+    urlBase = None
+    urlXmlLatest = None
+    urlCatalog = None
+
+    def __init__(self, json_obj):
+        self.id = json_obj["id"]
+        self.extent = json_obj["extent"]
+        self.name = json_obj["name"]
+        self.alias = json_obj["alias"]
+        self.temporalResolutionHours = json_obj["temporalResolutionHours"]
+        self.spatialResolutionLonDegrees = json_obj["spatialResolutionLonDegrees"]
+        self.spatialResolutionLatDegrees = json_obj["spatialResolutionLatDegrees"]
+        self.spatialResolutionLonKm2 = json_obj["spatialResolutionLonKm2"]
+        self.spatialResolutionLatKm2 = json_obj["spatialResolutionLatKm2"]
+        self.added = json_obj["added"]
+        self.addedBy = json_obj["addedBy"]
+        self.productFormat = json_obj["productFormat"]
+        self.timeHorizon = json_obj["timeHorizon"]
+        self.idSource = json_obj["idSource"]
+        self.active = json_obj["active"]
+        self.idProductType = json_obj["idProductType"]
+        self.urlProduct = json_obj["urlProduct"]
+        self.license = json_obj["license"]
+        self.graphic = json_obj["graphic"]
+        self.mercurio = json_obj["mercurio"]
+        self.urlBase = json_obj["urlBase"]
+        self.urlXmlLatest = json_obj["urlXmlLatest"]
+        self.urlCatalog = json_obj["urlCatalog"]
+
+    def get_data(self, dates, variables):
+        latestNcssUrl = self._getLatestNcssUrl()
+        if dates is None:
+            dates = self._get_dates(latestNcssUrl)
+        return dates
 
     def _getLatestNcssUrl(self):
-        productLatest = requests.get(
-            "{0}{1}".format(self.datahub_product["urlBase"], self.datahub_product["urlXmlLatest"])
-        )
+        productLatest = requests.get("{0}{1}".format(self.urlBase, self.urlXmlLatest))
         tree = ElementTree.fromstring(productLatest.content)
         service = tree.find(
             "{http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0}service"
@@ -28,9 +76,17 @@ class ProductThredds():
             "{http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0}dataset"
         )
         latestNcssUrl = "{0}{1}{2}".format(
-            self.datahub_product["urlBase"], ncssPath, dataset.attrib["urlPath"]
+            self.urlBase, ncssPath, dataset.attrib["urlPath"]
         )
         return latestNcssUrl
+
+    def _get_dates(self, latestNcssUrl):
+        datasetDetailsGet = requests.get("{0}/dataset.xml".format(latestNcssUrl))
+        datasetDetails = ElementTree.fromstring(datasetDetailsGet.content)
+        begin = datasetDetails.find("TimeSpan").find("begin").text
+        end = datasetDetails.find("TimeSpan").find("end").text
+        return {"start": begin, "end": end}
+
 
 class DatahubAccess:
     def __init__(

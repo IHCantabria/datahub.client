@@ -26,7 +26,7 @@ class Products(object):
     def get_by_name_alias(self, name):
         products = self.get_all()
         for product in products:
-            if product["name"]  == name or product["alias"] == name:
+            if product["name"] == name or product["alias"] == name:
                 return product
         return None
 
@@ -55,7 +55,7 @@ class Products(object):
         else:
             raise response.raise_for_status()
         return data
-    
+
     def _set_filters(self, lon_min, lat_min, lon_max, lat_max):
         params = []
         if lon_min is not None:
