@@ -24,6 +24,7 @@ class TestVariables(unittest.TestCase):
         variables = Variables()
         variable = variables.get(-1)
         self.assertIsNone(variable)
-        
+
+
 if __name__ == "__main__":
     unittest.main()

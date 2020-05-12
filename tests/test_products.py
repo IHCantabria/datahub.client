@@ -3,6 +3,9 @@ from datahub.products import Products
 
 
 class TestProducts(unittest.TestCase):
+    def setUp(self):
+        self.id = 7
+
     def test_get_product(self):
         id = 7
         p = Products()
@@ -61,18 +64,18 @@ class TestProducts(unittest.TestCase):
             p.get_all(lon_min=-10, lon_max=0, lat_max=50)
 
     def test_get_variables(self):
-        id = 7
         p = Products()
-        variables = p.get_variables(id)
+        product = p.get(self.id)
+        variables = p.get_variables(product)
         n = len(variables)
         self.assertEqual(n, 5)
 
     def test_get_variables_no_product(self):
-        id = -5
+        invalid_product = {} 
         p = Products()
-        variables = p.get_variables(id)
-        n = len(variables)
-        self.assertEqual(n, 0)
+        with self.assertRaises(Exception):
+            p.get_variables(invalid_product)
+
 
 
 if __name__ == "__main__":

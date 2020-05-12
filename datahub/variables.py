@@ -32,7 +32,7 @@ class Variables(object):
         return data
 
     def get(self, id_variable):
-        url = f"{self.url_variables}/{id_variable}"
+        url = "{url}/{id}".format(url=self.url_variables, id=id_variable)
 
         response = requests.get(url)
         if response.ok:
