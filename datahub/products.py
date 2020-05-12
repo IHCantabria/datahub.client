@@ -10,7 +10,7 @@ class Products(object):
         self.url = configuration.URLs["products"]
 
     def get(self, id_product):
-        url_products = f"{self.url}/{id_product}"
+        url_products = "{url}/{id}".format(url=self.url, id=id_product)
 
         response = requests.get(url_products)
         if response.ok:
@@ -46,8 +46,8 @@ class Products(object):
             raise response.raise_for_status()
         return data
 
-    def get_variables(self, id_product):
-        url_products = f"{self.url}/{id_product}/Variables"
+    def get_variables(self, product):
+        url_products = "{url}/{id}/Variables".format(url=self.url, id=str(product["id"]))
 
         response = requests.get(url_products)
         if response.ok:
@@ -74,3 +74,4 @@ class Products(object):
         if n > 0 and n != 4:
             return False
         return True
+    
