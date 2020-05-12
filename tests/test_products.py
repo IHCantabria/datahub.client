@@ -71,11 +71,10 @@ class TestProducts(unittest.TestCase):
         self.assertEqual(n, 5)
 
     def test_get_variables_no_product(self):
-        invalid_product = {} 
+        invalid_product = {}
         p = Products()
         with self.assertRaises(Exception):
             p.get_variables(invalid_product)
-
 
 
 if __name__ == "__main__":

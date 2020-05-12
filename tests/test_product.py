@@ -1,6 +1,6 @@
 import unittest
 from datahub.products import Products
-from datahub.product import Product
+from datahub.model.product import Product
 
 
 class TestProduct(unittest.TestCase):
@@ -47,7 +47,7 @@ class TestProduct(unittest.TestCase):
         url = product._getLatestNcssUrl()
         self.assertEqual(url_expected, url)
 
-    def test_dates_latest(self) :
+    def test_dates_latest(self):
         p = Products()
         obj_json = p.get(self.id)
         product = Product(obj_json)
@@ -55,6 +55,7 @@ class TestProduct(unittest.TestCase):
         dates = product._get_dates(url)
         self.assertIsNotNone(dates["start"])
         self.assertIsNotNone(dates["end"])
+
+
 if __name__ == "__main__":
     unittest.main()
-

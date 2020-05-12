@@ -47,7 +47,9 @@ class Products(object):
         return data
 
     def get_variables(self, product):
-        url_products = "{url}/{id}/Variables".format(url=self.url, id=str(product["id"]))
+        url_products = "{url}/{id}/Variables".format(
+            url=self.url, id=str(product["id"])
+        )
 
         response = requests.get(url_products)
         if response.ok:
@@ -74,4 +76,3 @@ class Products(object):
         if n > 0 and n != 4:
             return False
         return True
-    

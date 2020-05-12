@@ -4,6 +4,7 @@ from xml.etree import ElementTree
 import csv
 from io import StringIO
 from datahub import Conf
+from datahub import utils
 
 
 class Product(object):
@@ -61,7 +62,7 @@ class Product(object):
         latestNcssUrl = self._getLatestNcssUrl()
         if dates is None:
             dates = self._get_dates(latestNcssUrl)
-        return dates
+        # variables = self._get_variables()
 
     def _getLatestNcssUrl(self):
         productLatest = requests.get("{0}{1}".format(self.urlBase, self.urlXmlLatest))
@@ -83,9 +84,18 @@ class Product(object):
     def _get_dates(self, latestNcssUrl):
         datasetDetailsGet = requests.get("{0}/dataset.xml".format(latestNcssUrl))
         datasetDetails = ElementTree.fromstring(datasetDetailsGet.content)
-        begin = datasetDetails.find("TimeSpan").find("begin").text
-        end = datasetDetails.find("TimeSpan").find("end").text
-        return {"start": begin, "end": end}
+        str_begin = datasetDetails.find("TimeSpan").find("begin").text
+        str_end = datasetDetails.find("TimeSpan").find("end").text
+        start = utils.string_to_datetime(str_begin)
+        end = utils.string_to_datetime(str_end)
+        return {"start": start, "end": end}
+
+    def _get_variables(self):
+        url = "https://datahub.ihcantabria.com/v1/public/Products/{id_product}/Variables".format(
+            id_product=self.id
+        )
+        # request.get()
+        return None
 
 
 class DatahubAccess:
