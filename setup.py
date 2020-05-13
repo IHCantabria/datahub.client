@@ -20,12 +20,12 @@ dependency_links = [
 ]
 
 setup(
-    name="datahubAccess",
+    name="datahubClient",
     version=__version__,
     description="Datahub tools",
     long_description=long_description,
-    url="http://github.com/ihcantabria/datahubAccess",
-    download_url="http://github.com/ihcantabria/datahubAccess/tarball/" + __version__,
+    url="http://github.com/ihcantabria/datahub.client",
+    download_url="http://github.com/ihcantabria/datahub.client/tarball/" + __version__,
     license="GPLv3",
     classifiers=[
         "Development Status :: 3 - Alpha",
