@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import csv
 from datetime import datetime, timedelta
 from io import StringIO
@@ -21,23 +22,29 @@ class Catalog(object):
     def datasets(self):
         productLatest = requests.get(self.url)
         bxml = productLatest.content
-        tree = ElementTree.fromstring(bxml)
-        service = tree.find(
-            "{http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0}service"
-        )
-        for child in service:
-            if child.attrib["name"] == "ncss":
-                ncssPath = child.attrib["base"]
-        datasets_xml = tree.getchildren()[2].getchildren()[1:]
+
+        soup = BeautifulSoup(bxml, "xml")
+        services = soup.find_all("service")
+        ncssPath = ""
+        for service in services:
+            if service.attrs["name"] == "ncss":
+                ncssPath = service.attrs["base"]
+
+        datasets_xml = soup.find_all('dataset')
         datasets = []
-        for d in datasets_xml:
-            if d.attrib["urlPath"] != "latest.xml":
-                dataset = Dataset(
-                    "{dns}{ncss}{dataset}".format(
-                        dns=self.urlBase, ncss=ncssPath, dataset=d.attrib["urlPath"]
+        for dataset_xml in datasets_xml:
+            try:
+                if dataset_xml.attrs["urlPath"] != "latest.xml":
+                    dataset = Dataset(
+                        "{dns}{ncss}{dataset}".format(
+                            dns=self.urlBase, ncss=ncssPath, dataset=dataset_xml.attrs["urlPath"]
+                        )
                     )
-                )
-                datasets.append(dataset)
+                    datasets.append(dataset)
+
+            except KeyError:
+                pass       
+        
         return datasets
 
     def download(self, coordinates, dates, variables):
@@ -76,7 +83,7 @@ class Catalog(object):
                         )
             else:
                 print(response.text)
-        return True
+        return "output.csv"
 
     def _get_datasets_with_data(self, dates):
         dataset_ok = []
