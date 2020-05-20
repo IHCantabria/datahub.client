@@ -29,6 +29,7 @@ class Catalog(object):
         for service in services:
             if service.attrs["name"] == "ncss":
                 ncssPath = service.attrs["base"]
+                break
 
         datasets_xml = soup.find_all('dataset')
         datasets = []
@@ -103,8 +104,8 @@ class Dataset(object):
     @property
     def dates(self):
         datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
-        datasetDetails = ElementTree.fromstring(datasetDetailsGet.content)
-        begin = datasetDetails.find("TimeSpan").find("begin").text
-        end = datasetDetails.find("TimeSpan").find("end").text
+        soup = BeautifulSoup(datasetDetailsGet.content)
+        begin = soup.find("TimeSpan").find("begin").text
+        end = soup.find("TimeSpan").find("end").text
         dates = {"start": begin, "end": end}
         return dates
