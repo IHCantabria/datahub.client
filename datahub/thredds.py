@@ -31,30 +31,31 @@ class Catalog(object):
                 ncssPath = service.attrs["base"]
                 break
 
-        datasets_xml = soup.find_all('dataset')
+        datasets_xml = soup.find_all("dataset")
         datasets = []
         for dataset_xml in datasets_xml:
-            try:
-                if dataset_xml.attrs["urlPath"] != "latest.xml":
-                    dataset = Dataset(
-                        "{dns}{ncss}{dataset}".format(
-                            dns=self.urlBase, ncss=ncssPath, dataset=dataset_xml.attrs["urlPath"]
-                        )
+            if (
+                dataset_xml.has_attr("urlPath")
+                and dataset_xml.attrs["urlPath"] != "latest.xml"
+            ):
+                dataset = Dataset(
+                    "{dns}{ncss}{dataset}".format(
+                        dns=self.urlBase,
+                        ncss=ncssPath,
+                        dataset=dataset_xml.attrs["urlPath"],
                     )
-                    datasets.append(dataset)
+                )
+                datasets.append(dataset)
 
-            except KeyError:
-                pass       
-        
         return datasets
 
-    def download(self, coordinates, dates, variables):
+    def data(self, coordinates, dates, variables):
         datasets_for_download = self._get_datasets_with_data(dates)
 
-        outputs = []
+        points = []
 
         for dataset in datasets_for_download:
-            
+
             ncssUrl = "{0}?var=VMDR&longitude={1}&latitude={2}&time_start={3}&time_end={4}&accept={5}&vertCoord=0.49402499198913574".format(
                 dataset.ncss_url,
                 coordinates["lon"],
@@ -64,27 +65,17 @@ class Catalog(object):
                 "xml",
             )
             response = requests.get(ncssUrl)
-            csv_text = StringIO(response.text)
-            outputs.append(csv)
-            if not "Lat/Lon" in response.text:
-                csv_reader = csv.reader(csv_text, delimiter=",")
-                next(csv_reader)
-                with open("output.csv", mode="w", newline="") as output:
-                    spamwriter = csv.writer(
-                        output, delimiter=";", quoting=csv.QUOTE_MINIMAL
-                    )
-                    for row in csv_reader:
-                        spamwriter.writerow(
-                            [
-                                row[0],
-                                row[1],
-                                row[2],
-                                float(row[3])
-                            ]
-                        )
-            else:
-                print(response.text)
-        return "output.csv"
+
+            soup = BeautifulSoup(response.content, "xml")
+            points_xml = soup.find_all("point")
+
+            for point_xml in points_xml:
+                point = {}
+                data_tags_xml = point_xml.find_all("data")
+                for data_xml in data_tags_xml:
+                    point.update({data_xml.attrs["name"]: data_xml.text})
+                points.append(point)
+        return points
 
     def _get_datasets_with_data(self, dates):
         dataset_ok = []
@@ -105,7 +96,7 @@ class Dataset(object):
     def dates(self):
         datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
         soup = BeautifulSoup(datasetDetailsGet.content)
-        begin = soup.find("TimeSpan").find("begin").text
-        end = soup.find("TimeSpan").find("end").text
+        begin = soup.find("timespan").find("begin").text
+        end = soup.find("timespan").find("end").text
         dates = {"start": begin, "end": end}
         return dates
