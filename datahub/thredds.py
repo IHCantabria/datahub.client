@@ -95,7 +95,7 @@ class Dataset(object):
     @property
     def dates(self):
         datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
-        soup = BeautifulSoup(datasetDetailsGet.content)
+        soup = BeautifulSoup(datasetDetailsGet.content, "lxml")
         begin = soup.find("timespan").find("begin").text
         end = soup.find("timespan").find("end").text
         dates = {"start": begin, "end": end}
