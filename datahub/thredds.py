@@ -53,11 +53,12 @@ class Catalog(object):
         datasets_for_download = self._get_datasets_with_data(dates)
 
         points = []
-
+        name_variables = self._get_name_variables(variables)
         for dataset in datasets_for_download:
 
-            ncssUrl = "{0}?var=VMDR&longitude={1}&latitude={2}&time_start={3}&time_end={4}&accept={5}&vertCoord=0.49402499198913574".format(
+            ncssUrl = "{0}?var={1}&longitude={2}&latitude={3}&time_start={4}&time_end={5}&accept={6}&vertCoord=0.49402499198913574".format(
                 dataset.ncss_url,
+                name_variables,
                 coordinates["lon"],
                 coordinates["lat"],
                 dates["start"],
@@ -86,6 +87,12 @@ class Catalog(object):
             ):
                 dataset_ok.append(dataset)
         return dataset_ok
+
+    def _get_name_variables(self, variables):
+        nameShort = []
+        for variable in variables:
+            nameShort.append(variable["nameShort"])
+        return ",".join(nameShort)
 
 
 class Dataset(object):
