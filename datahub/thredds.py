@@ -56,14 +56,14 @@ class Catalog(object):
         name_variables = self._get_name_variables(variables)
         for dataset in datasets_for_download:
 
-            ncssUrl = "{0}?var={1}&longitude={2}&latitude={3}&time_start={4}&time_end={5}&accept={6}&vertCoord=0.49402499198913574".format(
-                dataset.ncss_url,
-                name_variables,
-                coordinates["lon"],
-                coordinates["lat"],
-                dates["start"],
-                dates["end"],
-                "xml",
+            ncssUrl = "{url}?var={vars}&longitude={lon}&latitude={lat}&time_start={start}&time_end={end}&accept={format}".format(
+                url=dataset.ncss_url,
+                vars=name_variables,
+                lon=coordinates["lon"],
+                lat=coordinates["lat"],
+                start=dates["start"],
+                end=dates["end"],
+                format="xml"
             )
             response = requests.get(ncssUrl)
 
