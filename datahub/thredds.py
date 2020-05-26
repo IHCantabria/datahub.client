@@ -63,7 +63,7 @@ class Catalog(object):
                 lat=coordinates["lat"],
                 start=dates["start"],
                 end=dates["end"],
-                format="xml"
+                format="xml",
             )
             response = requests.get(ncssUrl)
 
