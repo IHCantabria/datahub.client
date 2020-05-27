@@ -107,3 +107,19 @@ class Dataset(object):
         end = soup.find("timespan").find("end").text
         dates = {"start": begin, "end": end}
         return dates
+    
+    @property
+    def extent(self):
+        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
+        soup = BeautifulSoup(datasetDetailsGet.content, "lxml")
+        west = soup.find("latlonbox").find("west").text
+        east = soup.find("latlonbox").find("east").text
+        north = soup.find("latlonbox").find("north").text
+        south = soup.find("latlonbox").find("south").text
+        bound = {
+            "east": east,
+            "north": north,
+            "south": south,
+            "west": west
+        }
+        return bound

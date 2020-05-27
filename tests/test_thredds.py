@@ -36,7 +36,6 @@ class TestCatalog(unittest.TestCase):
         ]
 
     def test_get_datasets(self):
-
         c = Catalog(self.product)
         n = len(c.datasets)
         self.assertEqual(n, 1)
@@ -48,6 +47,12 @@ class TestCatalog(unittest.TestCase):
         points = c.data(coordinates, dates, self.variables)
         n = len(points)
         self.assertEqual(n, 5)
+
+    def test_get_extent_dataset(self):
+        c = Catalog(self.product)
+        datasets = c.datasets
+        extent = datasets[0].extent
+        self.assertIsNotNone(extent["north"])
 
 
 if __name__ == "__main__":
