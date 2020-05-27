@@ -48,11 +48,26 @@ class TestCatalog(unittest.TestCase):
         n = len(points)
         self.assertEqual(n, 5)
 
+    def test_download_extent(self):
+        coordinates = {"north": 43.456, "east": -2.883, "south": 43, "west": -3}
+        dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
+        filename = "/tmp/test.nc"
+        c = Catalog(self.product)
+        filenames = c.download(coordinates, dates, self.variables, filename)
+        self.assertIn(filename, filenames)
+
     def test_get_extent_dataset(self):
         c = Catalog(self.product)
         datasets = c.datasets
         extent = datasets[0].extent
         self.assertIsNotNone(extent["north"])
+
+    def test_accept_list(self):
+        c = Catalog(self.product)
+        datasets = c.datasets
+        accept_list = datasets[0].accept_list
+        self.assertIn("grid", accept_list)
+        self.assertIn("xml", accept_list["grid"])
 
 
 if __name__ == "__main__":

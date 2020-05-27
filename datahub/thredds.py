@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from io import StringIO
 import json
 import requests
+import urllib.request
 
 from xml.etree import ElementTree
 
@@ -51,32 +52,26 @@ class Catalog(object):
 
     def data(self, coordinates, dates, variables):
         datasets_for_download = self._get_datasets_with_data(dates)
-
         points = []
-        name_variables = self._get_name_variables(variables)
+
         for dataset in datasets_for_download:
-
-            ncssUrl = "{url}?var={vars}&longitude={lon}&latitude={lat}&time_start={start}&time_end={end}&accept={format}".format(
-                url=dataset.ncss_url,
-                vars=name_variables,
-                lon=coordinates["lon"],
-                lat=coordinates["lat"],
-                start=dates["start"],
-                end=dates["end"],
-                format="xml",
-            )
-            response = requests.get(ncssUrl)
-
-            soup = BeautifulSoup(response.content, "xml")
-            points_xml = soup.find_all("point")
-
-            for point_xml in points_xml:
-                point = {}
-                data_tags_xml = point_xml.find_all("data")
-                for data_xml in data_tags_xml:
-                    point.update({data_xml.attrs["name"]: data_xml.text})
-                points.append(point)
+            points.extend(dataset.data(coordinates, dates, variables))
         return points
+
+    def download(self, coordinates, dates, variables, filename, formato="netcdf"):
+        datasets_for_download = self._get_datasets_with_data(dates)
+        filenames = []
+        if len(datasets_for_download) > 1:
+            for i, dataset in enumerate(datasets_for_download):
+                name = dataset.download(
+                    coordinates, dates, variables, f"{filename}{i}", formato
+                )
+                filenames.append(name)
+        elif len(datasets_for_download) > 0:
+            dataset = datasets_for_download[0]
+            name = dataset.download(coordinates, dates, variables, filename, formato)
+            filenames.append(name)
+        return filenames
 
     def _get_datasets_with_data(self, dates):
         dataset_ok = []
@@ -88,11 +83,13 @@ class Catalog(object):
                 dataset_ok.append(dataset)
         return dataset_ok
 
-    def _get_name_variables(self, variables):
-        nameShort = []
-        for variable in variables:
-            nameShort.append(variable["nameShort"])
-        return ",".join(nameShort)
+    def _coordinates_to_string(self, coordinates):
+        text = ""
+        if "lat" in coordinates:
+            text = f"&longitude={coordinates['lon']}&latitude={coordinates['lat']}"
+        else:
+            text = f"&north={coordinates['north']}&east={coordinates['east']}&south={coordinates['south']}&west={coordinates['west']}"
+        return text
 
 
 class Dataset(object):
@@ -107,7 +104,7 @@ class Dataset(object):
         end = soup.find("timespan").find("end").text
         dates = {"start": begin, "end": end}
         return dates
-    
+
     @property
     def extent(self):
         datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
@@ -116,10 +113,76 @@ class Dataset(object):
         east = soup.find("latlonbox").find("east").text
         north = soup.find("latlonbox").find("north").text
         south = soup.find("latlonbox").find("south").text
-        bound = {
-            "east": east,
-            "north": north,
-            "south": south,
-            "west": west
-        }
+        bound = {"east": east, "north": north, "south": south, "west": west}
         return bound
+
+    @property
+    def accept_list(self):
+        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
+        soup = BeautifulSoup(datasetDetailsGet.content, "lxml")
+        grid_as_point = soup.find("acceptlist").find("gridaspoint").find_all("accept")
+        grid = soup.find("acceptlist").find("gridaspoint").find_all("accept")
+
+        dict_as_point = []
+        dict_grid = []
+
+        for accept in grid_as_point:
+            dict_as_point.append(accept.text)
+        for accept in grid:
+            dict_grid.append(accept.text)
+
+        accept_list = {"grid_as_point": dict_as_point, "grid": dict_grid}
+        return accept_list
+
+    def data(self, coordinates, dates, variables):
+        ncss_coordinates = self._coordinates_to_string(coordinates)
+        points = []
+        name_variables = self._get_name_variables(variables)
+        ncssUrl = "{url}?var={vars}{coordinates}&time_start={start}&time_end={end}&accept={format}".format(
+            url=self.ncss_url,
+            vars=name_variables,
+            coordinates=ncss_coordinates,
+            start=dates["start"],
+            end=dates["end"],
+            format="xml",
+        )
+        response = requests.get(ncssUrl)
+        soup = BeautifulSoup(response.content, "xml")
+        points_xml = soup.find_all("point")
+        for point_xml in points_xml:
+            point = {}
+            data_tags_xml = point_xml.find_all("data")
+            for data_xml in data_tags_xml:
+                point.update({data_xml.attrs["name"]: data_xml.text})
+            points.append(point)
+        return points
+
+    def download(self, coordinates, dates, variables, filename, formato="netcdf"):
+
+        ncss_coordinates = self._coordinates_to_string(coordinates)
+        name_variables = self._get_name_variables(variables)
+
+        ncssUrl = "{url}?var={vars}{coordinates}&time_start={start}&time_end={end}&accept={format}".format(
+            url=self.ncss_url,
+            vars=name_variables,
+            coordinates=ncss_coordinates,
+            start=dates["start"],
+            end=dates["end"],
+            format=formato,
+        )
+        urllib.request.urlretrieve(ncssUrl, filename)
+        return filename
+
+    def _get_name_variables(self, variables):
+        nameShort = []
+        for variable in variables:
+            nameShort.append(variable["nameShort"])
+        return ",".join(nameShort)
+
+    def _coordinates_to_string(self, coordinates):
+        text = ""
+        if "lat" in coordinates:
+            text = f"&longitude={coordinates['lon']}&latitude={coordinates['lat']}"
+        else:
+            text = f"&north={coordinates['north']}&east={coordinates['east']}&south={coordinates['south']}&west={coordinates['west']}"
+        return text
