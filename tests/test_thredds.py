@@ -55,6 +55,14 @@ class TestCatalog(unittest.TestCase):
         c = Catalog(self.product)
         filenames = c.download(coordinates, dates, self.variables, filename)
         self.assertIn(filename, filenames)
+    
+    def test_download_csv_point(self):
+        coordinates = {"lon": 43.456, "lat": -2.883}
+        dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
+        filename = "/tmp/test.csv"
+        c = Catalog(self.product)
+        filenames = c.download(coordinates, dates, self.variables, filename, "csv")
+        self.assertIn(filename, filenames)
 
     def test_get_extent_dataset(self):
         c = Catalog(self.product)
