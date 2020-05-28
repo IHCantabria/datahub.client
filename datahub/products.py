@@ -2,6 +2,9 @@ import json
 import requests
 
 from datahub.config import Config
+from datahub import utils
+
+logger = utils.get_logger(__name__)
 
 
 class Products(object):
@@ -16,18 +19,23 @@ class Products(object):
         if response.ok:
             data = json.loads(response.content)
         else:
+            logger.error(response.raise_for_status())
             raise response.raise_for_status()
         try:
             product_json = data[0]
+            logger.info(f"Product found, id={product_json['id']}")
             return product_json
-        except IndexError:
+        except IndexError as ie:
+            logger.error(ie)
             return None
 
     def get_by_name_alias(self, name):
         products = self.get_all()
         for product in products:
             if product["name"] == name or product["alias"] == name:
+                logger.info(f"Product found, id={product['id']}")
                 return product
+        logger.info(f"Product not found")
         return None
 
     def get_all(self, lon_min=None, lat_min=None, lon_max=None, lat_max=None):
@@ -43,7 +51,9 @@ class Products(object):
         if response.ok:
             data = json.loads(response.content)
         else:
+            logger.error(response.raise_for_status())
             raise response.raise_for_status()
+        logger.info(f"{len(data)} products found")
         return data
 
     def get_variables(self, product):
@@ -55,7 +65,9 @@ class Products(object):
         if response.ok:
             data = json.loads(response.content)
         else:
+            logger.error(response.raise_for_status())
             raise response.raise_for_status()
+        logger.info(f"{len(data)} variables found")
         return data
 
     def _set_filters(self, lon_min, lat_min, lon_max, lat_max):

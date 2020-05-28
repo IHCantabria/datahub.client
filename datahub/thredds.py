@@ -8,6 +8,10 @@ import urllib.request
 
 from xml.etree import ElementTree
 
+from datahub import utils
+
+logger = utils.get_logger(__name__)
+
 
 class Catalog(object):
     def __init__(self, product):
@@ -17,7 +21,9 @@ class Catalog(object):
 
     @property
     def url(self):
-        return f"{self.urlBase}{self.urlCatalog}"
+        url = f"{self.urlBase}{self.urlCatalog}"
+        logger.debug(f"url={url}")
+        return url
 
     @property
     def datasets(self):
@@ -31,7 +37,7 @@ class Catalog(object):
             if service.attrs["name"] == "ncss":
                 ncssPath = service.attrs["base"]
                 break
-
+        logger.debug(f"ncssPath={ncssPath}")
         datasets_xml = soup.find_all("dataset")
         datasets = []
         for dataset_xml in datasets_xml:
@@ -47,7 +53,7 @@ class Catalog(object):
                     )
                 )
                 datasets.append(dataset)
-
+        logger.info(f"{len(datasets)} datasets found")
         return datasets
 
     def data(self, coordinates, dates, variables):
@@ -56,6 +62,7 @@ class Catalog(object):
 
         for dataset in datasets_for_download:
             points.extend(dataset.data(coordinates, dates, variables))
+        logger.info(f"{len(points)} points found")
         return points
 
     def download(self, coordinates, dates, variables, filename, formato="netcdf"):
@@ -71,6 +78,7 @@ class Catalog(object):
             dataset = datasets_for_download[0]
             name = dataset.download(coordinates, dates, variables, filename, formato)
             filenames.append(name)
+        logger.info(f"downloaded completed in {name}")
         return filenames
 
     def _get_datasets_with_data(self, dates):
@@ -89,6 +97,7 @@ class Catalog(object):
             text = f"&longitude={coordinates['lon']}&latitude={coordinates['lat']}"
         else:
             text = f"&north={coordinates['north']}&east={coordinates['east']}&south={coordinates['south']}&west={coordinates['west']}"
+        logger.debug(f"coordinates={coordinates}")
         return text
 
 
@@ -103,6 +112,7 @@ class Dataset(object):
         begin = soup.find("timespan").find("begin").text
         end = soup.find("timespan").find("end").text
         dates = {"start": begin, "end": end}
+        logger.debug(f"dates={dates}")
         return dates
 
     @property
@@ -114,6 +124,7 @@ class Dataset(object):
         north = soup.find("latlonbox").find("north").text
         south = soup.find("latlonbox").find("south").text
         bound = {"east": east, "north": north, "south": south, "west": west}
+        logger.debug(f"boud={bound}")
         return bound
 
     @property
@@ -132,6 +143,7 @@ class Dataset(object):
             dict_grid.append(accept.text)
 
         accept_list = {"grid_as_point": dict_as_point, "grid": dict_grid}
+        logger.debug(f"accept_list={accept_list}")
         return accept_list
 
     def data(self, coordinates, dates, variables):
@@ -171,13 +183,16 @@ class Dataset(object):
             format=formato,
         )
         urllib.request.urlretrieve(ncssUrl, filename)
+        logger.debug(f"dataset downloaded completed in {filename}")
         return filename
 
     def _get_name_variables(self, variables):
         nameShort = []
         for variable in variables:
             nameShort.append(variable["nameShort"])
-        return ",".join(nameShort)
+        complete_name_short = ",".join(nameShort)
+        logger.debug(f"name short={complete_name_short}")
+        return complete_name_short
 
     def _coordinates_to_string(self, coordinates):
         text = ""
@@ -185,4 +200,5 @@ class Dataset(object):
             text = f"&longitude={coordinates['lon']}&latitude={coordinates['lat']}"
         else:
             text = f"&north={coordinates['north']}&east={coordinates['east']}&south={coordinates['south']}&west={coordinates['west']}"
+        logger.debug(f"coordinates={text}")
         return text
