@@ -2,3 +2,4 @@ include README.md
 include requirements.txt
 include config.json
 include datahub/config.json
+include datahub/logging.ini
