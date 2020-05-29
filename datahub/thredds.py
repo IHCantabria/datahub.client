@@ -45,13 +45,20 @@ class Catalog(object):
                 dataset_xml.has_attr("urlPath")
                 and dataset_xml.attrs["urlPath"] != "latest.xml"
             ):
-                dataset = Dataset(
-                    "{dns}{ncss}{dataset}".format(
-                        dns=self.urlBase,
-                        ncss=ncssPath,
-                        dataset=dataset_xml.attrs["urlPath"],
-                    )
+                urlPath = "{dns}{ncss}{dataset}".format(
+                    dns=self.urlBase,
+                    ncss=ncssPath,
+                    dataset=dataset_xml.attrs["urlPath"],
                 )
+                name = dataset_xml.attrs["name"]
+                id = dataset_xml.attrs["ID"]
+                restrictAccess = None
+                try:
+                    restrictAccess = dataset_xml.attrs["restrictAccess"]
+                except KeyError:
+                    pass
+
+                dataset = Dataset(name, id, urlPath, restrictAccess)
                 datasets.append(dataset)
         logger.info(f"{len(datasets)} datasets found")
         return datasets
@@ -102,7 +109,10 @@ class Catalog(object):
 
 
 class Dataset(object):
-    def __init__(self, url):
+    def __init__(self, name, id, url, restrictAccess):
+        self.name = name
+        self.id = id
+        self.restrictAccess = restrictAccess
         self.ncss_url = url
 
     @property

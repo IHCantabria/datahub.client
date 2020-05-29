@@ -10,6 +10,11 @@ class TestCatalog(unittest.TestCase):
             "urlXmlLatest": "/thredds/catalog/copernicus/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/latest.xml",
             "urlCatalog": "/thredds/catalog/copernicus/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/catalog.xml",
         }
+        self.product_protected = {
+            "urlBase": "https://ihthredds.ihcantabria.com",
+            "urlXmlLatest": "/thredds/catalog/aemetharmonie/algeciras/latest.xml",
+            "urlCatalog": "/thredds/catalog/aemetharmonie/algeciras/catalog.xml",
+        }
         self.variables = [
             {
                 "id": 317,
@@ -76,6 +81,11 @@ class TestCatalog(unittest.TestCase):
         accept_list = datasets[0].accept_list
         self.assertIn("grid", accept_list)
         self.assertIn("xml", accept_list["grid"])
+
+    # def test_is_protected(self):
+    #     c = Catalog(self.product_protected)
+    #     protected = c.is_protected
+    #     self.assertTrue(protected)
 
 
 if __name__ == "__main__":
