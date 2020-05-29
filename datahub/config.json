@@ -3,5 +3,12 @@
         "products": "https://datahub.ihcantabria.com/v1/public/Products",
         "product_variables": "https://datahub.ihcantabria.com/v1/public/Products/{id_product}/Variables",
         "variables": "https://datahub.ihcantabria.com/v1/public/Variables"
-    }
+    },
+    "restrictAccess": [
+        {
+            "catalog": "",
+            "user": "",
+            "password": ""
+        }
+    ]
 }
