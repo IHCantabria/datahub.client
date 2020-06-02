@@ -6,7 +6,7 @@
     },
     "restrictAccess": [
         {
-            "catalog": "",
+            "catalog": "AEMET_HARMONIE",
             "user": "",
             "password": ""
         }

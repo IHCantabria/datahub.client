@@ -8,6 +8,7 @@ import urllib.request
 
 from xml.etree import ElementTree
 
+from datahub.config import Config
 from datahub import utils
 
 logger = utils.get_logger(__name__)
@@ -19,6 +20,15 @@ class Catalog(object):
         self.urlXmlLatest = product["urlXmlLatest"]
         self.urlCatalog = product["urlCatalog"]
 
+        configuration = Config()
+        self.auth = ()
+        auth_json = configuration.get_auth_for_catalog(product["name"])
+        
+        if auth_json:
+            from requests.auth import HTTPBasicAuth
+            self.auth = HTTPBasicAuth(auth_json["user"], auth_json["password"])
+            logger.debug("Using auth")
+
     @property
     def url(self):
         url = f"{self.urlBase}{self.urlCatalog}"
@@ -27,7 +37,7 @@ class Catalog(object):
 
     @property
     def datasets(self):
-        productLatest = requests.get(self.url)
+        productLatest = requests.get(self.url, auth=self.auth)
         bxml = productLatest.content
 
         soup = BeautifulSoup(bxml, "xml")
@@ -52,13 +62,7 @@ class Catalog(object):
                 )
                 name = dataset_xml.attrs["name"]
                 id = dataset_xml.attrs["ID"]
-                restrictAccess = None
-                try:
-                    restrictAccess = dataset_xml.attrs["restrictAccess"]
-                except KeyError:
-                    pass
-
-                dataset = Dataset(name, id, urlPath, restrictAccess)
+                dataset = Dataset(name, id, urlPath, self.auth)
                 datasets.append(dataset)
         logger.info(f"{len(datasets)} datasets found")
         return datasets
@@ -109,15 +113,16 @@ class Catalog(object):
 
 
 class Dataset(object):
-    def __init__(self, name, id, url, restrictAccess):
+    def __init__(self, name, id, url, auth):
         self.name = name
         self.id = id
-        self.restrictAccess = restrictAccess
+        # self.restrictAccess = restrictAccess
         self.ncss_url = url
+        self.auth = auth
 
     @property
     def dates(self):
-        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
+        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml", auth=self.auth)
         soup = BeautifulSoup(datasetDetailsGet.content, "lxml")
         begin = soup.find("timespan").find("begin").text
         end = soup.find("timespan").find("end").text
@@ -127,7 +132,7 @@ class Dataset(object):
 
     @property
     def extent(self):
-        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
+        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml", auth=self.auth)
         soup = BeautifulSoup(datasetDetailsGet.content, "lxml")
         west = soup.find("latlonbox").find("west").text
         east = soup.find("latlonbox").find("east").text
@@ -139,7 +144,7 @@ class Dataset(object):
 
     @property
     def accept_list(self):
-        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml")
+        datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml", auth=self.auth)
         soup = BeautifulSoup(datasetDetailsGet.content, "lxml")
         grid_as_point = soup.find("acceptlist").find("gridaspoint").find_all("accept")
         grid = soup.find("acceptlist").find("gridaspoint").find_all("accept")
@@ -168,7 +173,7 @@ class Dataset(object):
             end=dates["end"],
             format="xml",
         )
-        response = requests.get(ncssUrl)
+        response = requests.get(ncssUrl, auth=self.auth)
         soup = BeautifulSoup(response.content, "xml")
         points_xml = soup.find_all("point")
         for point_xml in points_xml:
