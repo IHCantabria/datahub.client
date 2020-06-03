@@ -41,6 +41,34 @@ class TestCatalog(unittest.TestCase):
                 "productVariable": [],
             },
         ]
+        self.variables_harmonie = [
+            {
+                "id": 14,
+                "nameShort": "eastward_wind",
+                "nameLong": "eastward_wind",
+                "alias": "eastward wind",
+                "units": "m s-1",
+                "idVariableTypes": 10,
+                "definition": "\"Eastward\" indicates a vector component which is positive when directed eastward (negative westward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)",
+                "idCfConventions": 1,
+                "scaleFactor": 1,
+                "offset": 0,
+                "productVariable": []
+            },
+            {
+                "id": 15,
+                "nameShort": "northward_wind",
+                "nameLong": "northward_wind",
+                "alias": "northward wind",
+                "units": "m s-1",
+                "idVariableTypes": 10,
+                "definition": "\"Northward\" indicates a vector component which is positive when directed northward (negative southward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)",
+                "idCfConventions": 1,
+                "scaleFactor": 1,
+                "offset": 0,
+                "productVariable": []
+            }
+        ]
 
     def test_get_datasets(self):
         c = Catalog(self.product)
@@ -56,12 +84,12 @@ class TestCatalog(unittest.TestCase):
         self.assertEqual(n, 5)
 
     def test_data_protected(self):
-        coordinates = {"lat": 43.456, "lon": -2.883}
-        dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
+        coordinates = {"lat": 35.5, "lon": -5}
+        dates = {"start": "2020-06-02T06:00:00", "end": "2020-06-04T12:00:00"}
         c = Catalog(self.product_protected)
-        points = c.data(coordinates, dates, self.variables)
+        points = c.data(coordinates, dates, self.variables_harmonie)
         n = len(points)
-        self.assertEqual(n, 5)
+        self.assertEqual(n, 260)
 
     def test_download_extent(self):
         coordinates = {"north": 43.456, "east": -2.883, "south": 43, "west": -3}
