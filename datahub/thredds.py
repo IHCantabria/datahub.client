@@ -23,9 +23,10 @@ class Catalog(object):
         configuration = Config()
         self.auth = ()
         auth_json = configuration.get_auth_for_catalog(product["name"])
-        
+
         if auth_json:
             from requests.auth import HTTPBasicAuth
+
             self.auth = HTTPBasicAuth(auth_json["user"], auth_json["password"])
             logger.debug("Using auth")
 

@@ -49,11 +49,11 @@ class TestCatalog(unittest.TestCase):
                 "alias": "eastward wind",
                 "units": "m s-1",
                 "idVariableTypes": 10,
-                "definition": "\"Eastward\" indicates a vector component which is positive when directed eastward (negative westward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)",
+                "definition": '"Eastward" indicates a vector component which is positive when directed eastward (negative westward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)',
                 "idCfConventions": 1,
                 "scaleFactor": 1,
                 "offset": 0,
-                "productVariable": []
+                "productVariable": [],
             },
             {
                 "id": 15,
@@ -62,12 +62,12 @@ class TestCatalog(unittest.TestCase):
                 "alias": "northward wind",
                 "units": "m s-1",
                 "idVariableTypes": 10,
-                "definition": "\"Northward\" indicates a vector component which is positive when directed northward (negative southward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)",
+                "definition": '"Northward" indicates a vector component which is positive when directed northward (negative southward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)',
                 "idCfConventions": 1,
                 "scaleFactor": 1,
                 "offset": 0,
-                "productVariable": []
-            }
+                "productVariable": [],
+            },
         ]
 
     def test_get_datasets(self):
