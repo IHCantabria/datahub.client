@@ -1,4 +1,26 @@
 # Datahub.client
 
-datahub.client is a python library for work with [datahub] (https://datahub.ihcantabria.com)
+datahub.client is a python library to make it easy to query datahub and obtain data stored in thredds.
 
+
+## Implemented features
+
+### Datahub
+* Consult product list
+* Get a product by id / name / alias
+* Get variables of a product
+
+### Thredds
+* Access a catalog based on a product
+* Access to protected catalogs with authentication.
+* Obtain characteristics of the dataset that make up the catalog (dates, areas)
+* Obtain data for a point in a date period
+* Download the data for a point in CSV and netcdf format
+* Download in netcdf format the data for an area
+
+## Future features
+* Use from API.Process
+* Normalize data for each hour
+
+## Examples
+Examples can be found in the [doc folder](doc)
