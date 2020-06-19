@@ -44,10 +44,12 @@ class Catalog(object):
         soup = BeautifulSoup(bxml, "xml")
         services = soup.find_all("service")
         ncssPath = ""
+        httpserver = ""
         for service in services:
             if service.attrs["name"] == "ncss":
                 ncssPath = service.attrs["base"]
-                break
+            if service.attrs["name"] == "http":
+                httpserver = service.attrs["base"]
         logger.debug(f"ncssPath={ncssPath}")
         datasets_xml = soup.find_all("dataset")
         datasets = []
@@ -61,9 +63,14 @@ class Catalog(object):
                     ncss=ncssPath,
                     dataset=dataset_xml.attrs["urlPath"],
                 )
+                url_httpserver = "{dns}{httpserver}{dataset}".format(
+                    dns=self.urlBase,
+                    httpserver=httpserver,
+                    dataset=dataset_xml.attrs["urlPath"],
+                )
                 name = dataset_xml.attrs["name"]
                 id = dataset_xml.attrs["ID"]
-                dataset = Dataset(name, id, urlPath, self.auth)
+                dataset = Dataset(name, id, urlPath, url_httpserver, self.auth)
                 datasets.append(dataset)
         logger.info(f"{len(datasets)} datasets found")
         return datasets
@@ -114,11 +121,12 @@ class Catalog(object):
 
 
 class Dataset(object):
-    def __init__(self, name, id, url, auth):
+    def __init__(self, name, id, url, url_httpserver, auth):
         self.name = name
         self.id = id
         # self.restrictAccess = restrictAccess
         self.ncss_url = url
+        self.http_url = url_httpserver
         self.auth = auth
 
     @property
@@ -186,7 +194,6 @@ class Dataset(object):
         return points
 
     def download(self, coordinates, dates, variables, filename, formato="netcdf"):
-
         ncss_coordinates = self._coordinates_to_string(coordinates)
         name_variables = self._get_name_variables(variables)
 
@@ -201,6 +208,11 @@ class Dataset(object):
         urllib.request.urlretrieve(ncssUrl, filename)
         logger.debug(f"dataset downloaded completed in {filename}")
         return filename
+
+    def download_raw(self, local_path):
+        urllib.request.urlretrieve(self.http_url, local_path)
+        logger.debug(f"dataset downloaded in {local_path}")
+        return local_path
 
     def _get_name_variables(self, variables):
         nameShort = []

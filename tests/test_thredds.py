@@ -12,10 +12,10 @@ class TestCatalog(unittest.TestCase):
             "urlCatalog": "/thredds/catalog/copernicus/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/catalog.xml",
         }
         self.product_protected = {
-            "name": "AEMET_HARMONIE",
+            "name": "test",
             "urlBase": "https://ihthredds.ihcantabria.com",
-            "urlXmlLatest": "/thredds/catalog/aemetharmonie/algeciras/latest.xml",
-            "urlCatalog": "/thredds/catalog/aemetharmonie/algeciras/catalog.xml",
+            "urlXmlLatest": "/thredds/catalog/test/catalog.xml?dataset=test/null_island_test.nc",
+            "urlCatalog": "/thredds/catalog/test/catalog.xml",
         }
         self.variables = [
             {
@@ -41,33 +41,18 @@ class TestCatalog(unittest.TestCase):
                 "productVariable": [],
             },
         ]
-        self.variables_harmonie = [
+        self.variables_test = [
             {
-                "id": 14,
-                "nameShort": "eastward_wind",
-                "nameLong": "eastward_wind",
-                "alias": "eastward wind",
-                "units": "m s-1",
-                "idVariableTypes": 10,
-                "definition": '"Eastward" indicates a vector component which is positive when directed eastward (negative westward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)',
-                "idCfConventions": 1,
-                "scaleFactor": 1,
-                "offset": 0,
+                "id": 356,
+                "nameShort": "test",
+                "nameLong": "test",
+                "alias": "Test",
+                "units": "test",
+                "idVariableTypes": 2,
+                "scaleFactor": 1.0,
+                "offset": 0.0,
                 "productVariable": [],
-            },
-            {
-                "id": 15,
-                "nameShort": "northward_wind",
-                "nameLong": "northward_wind",
-                "alias": "northward wind",
-                "units": "m s-1",
-                "idVariableTypes": 10,
-                "definition": '"Northward" indicates a vector component which is positive when directed northward (negative southward). Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)',
-                "idCfConventions": 1,
-                "scaleFactor": 1,
-                "offset": 0,
-                "productVariable": [],
-            },
+            }
         ]
 
     def test_get_datasets(self):
@@ -84,10 +69,10 @@ class TestCatalog(unittest.TestCase):
         self.assertEqual(n, 5)
 
     def test_data_protected(self):
-        coordinates = {"lat": 35.5, "lon": -5}
+        coordinates = {"lat": 0.2, "lon": 0.2}
         dates = {"start": "2020-06-02T06:00:00", "end": "2020-06-04T12:00:00"}
         c = Catalog(self.product_protected)
-        points = c.data(coordinates, dates, self.variables_harmonie)
+        points = c.data(coordinates, dates, self.variables_test)
         n = len(points)
         self.assertEqual(n, 260)
 
@@ -106,6 +91,13 @@ class TestCatalog(unittest.TestCase):
         c = Catalog(self.product)
         filenames = c.download(coordinates, dates, self.variables, filename, "csv")
         self.assertIn(filename, filenames)
+
+    def test_download_raw(self):
+        local_path = "/tmp/test.nc"
+        catalog = Catalog(self.product)
+        dataset = catalog.datasets[0]
+        path = dataset.download_raw(local_path)
+        self.assertEqual(local_path, path)
 
     def test_get_extent_dataset(self):
         c = Catalog(self.product)
