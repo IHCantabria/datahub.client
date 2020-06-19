@@ -210,8 +210,9 @@ class Dataset(object):
         return filename
 
     def download_raw(self, local_path):
-        urllib.request.urlretrieve(self.http_url, local_path)
+        utils.download_file(self.http_url, local_path, self.auth)
         logger.debug(f"dataset downloaded in {local_path}")
+
         return local_path
 
     def _get_name_variables(self, variables):
