@@ -43,7 +43,7 @@ class TestProducts(unittest.TestCase):
         self.assertIsNone(product)
 
     def test_get_all(self):
-        expected_result = 172
+        expected_result = 173
         p = Products()
         all_products = p.get_all()
         n = len(all_products)
