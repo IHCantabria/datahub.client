@@ -94,7 +94,7 @@ class TestCatalog(unittest.TestCase):
 
     def test_download_raw(self):
         local_path = "/tmp/test.nc"
-        catalog = Catalog(self.product)
+        catalog = Catalog(self.product_protected)
         dataset = catalog.datasets[0]
         path = dataset.download_raw(local_path)
         self.assertEqual(local_path, path)
