@@ -19,6 +19,9 @@ datahub.client is a python library to make it easy to query datahub and obtain d
 * Download in netcdf format the data for an area
 * Download a dataset complete
 
+## Known bugs
+* Datasets require a begin and end date.
+
 ## Future features
 * Use from API.Process
 * Normalize data for each hour
