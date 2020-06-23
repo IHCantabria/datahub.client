@@ -30,14 +30,30 @@ datahub.client is a python library to make it easy to query datahub and obtain d
 Examples can be found in the [doc folder](doc)
 
 ## Installation
-This instructions are for linux system. Windows and Mac OS X will have similar instruccions.
 
-### Requirements
+### To use in your application, you can simply install it with:
+
+```sh
+python -m pip install git+ssh://git@github.com/IHCantabria/datahub.client@v0.2.1#egg=datahubclient
+``` 
+
+You will have the configuration file in the path:
+
+```
+{enviroment_path}/lib/python3.7/site-packages/datahub/config.json
+```
+
+
+
+### To download and work with the source code
+These instructions are for linux system. Windows and Mac OS X will have similar instruccions.
+
+#### Requirements
 * python v3.6 or higher
 * python3-venv
 * git
 
-### Download and environment
+#### Download and environment
 
 Clone repository
 
