@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (2020.06.29)
+### Bugfix
+- Remove `pkg-resources==0.0.0` from `requirements.txt`.
+
 ## 0.2.1 (2020.06.19)
 ### Features
 - Download dataset file as the original.
