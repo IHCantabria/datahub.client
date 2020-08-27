@@ -70,11 +70,11 @@ class TestCatalog(unittest.TestCase):
 
     def test_data_protected(self):
         coordinates = {"lat": 0.2, "lon": 0.2}
-        dates = {"start": "2020-06-02T06:00:00", "end": "2020-06-04T12:00:00"}
+        dates = None
         c = Catalog(self.product_protected)
         points = c.data(coordinates, dates, self.variables_test)
         n = len(points)
-        self.assertEqual(n, 260)
+        self.assertEqual(n, 1)
 
     def test_download_extent(self):
         coordinates = {"north": 43.456, "east": -2.883, "south": 43, "west": -3}

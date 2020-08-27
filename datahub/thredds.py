@@ -103,11 +103,22 @@ class Catalog(object):
     def _get_datasets_with_data(self, dates):
         dataset_ok = []
         for dataset in self.datasets:
-            if (
-                dates["start"] < dataset.dates["end"]
-                and dates["end"] > dataset.dates["start"]
-            ):
-                dataset_ok.append(dataset)
+            try:
+                if not dates:
+                    dataset_ok.append(dataset)
+                elif not dates["start"] and dates["end"] > dataset.dates["start"]:
+                    dataset_ok.append(dataset)
+                elif not dates["end"] and dates["start"] < dataset.dates["end"]:
+                    dataset_ok.append(dataset)
+                elif (
+                    dates["start"]
+                    and dates["end"]
+                    and dates["start"] < dataset.dates["end"]
+                    and dates["end"] > dataset.dates["start"]
+                ):
+                    dataset_ok.append(dataset)
+            except TypeError:
+                raise Exception("Dataset doesn't contain date period")
         return dataset_ok
 
     def _coordinates_to_string(self, coordinates):
@@ -176,16 +187,28 @@ class Dataset(object):
         logger.debug(f"accept_list={accept_list}")
         return accept_list
 
+    def __create_time_string_ncss(self, dates):
+        time_start = ""
+        time_end = ""
+        if dates and dates["start"]:
+            time_start = "&time_start={start}".format(start=dates["start"])
+        if dates and dates["end"]:
+            time_end = "&time_end={end}".format(end=dates["end"])
+        return time_start, time_end
+
     def data(self, coordinates, dates, variables):
         ncss_coordinates = self._coordinates_to_string(coordinates)
         points = []
         name_variables = self._get_name_variables(variables)
-        ncssUrl = "{url}?var={vars}{coordinates}&time_start={start}&time_end={end}&accept={format}".format(
+
+        time_start, time_end = self.__create_time_string_ncss(dates)
+
+        ncssUrl = "{url}?var={vars}{coordinates}{time_start}{time_end}&accept={format}".format(
             url=self.ncss_url,
             vars=name_variables,
             coordinates=ncss_coordinates,
-            start=dates["start"],
-            end=dates["end"],
+            time_start=time_start,
+            time_end=time_end,
             format="xml",
         )
         response = requests.get(ncssUrl, auth=self.auth)
