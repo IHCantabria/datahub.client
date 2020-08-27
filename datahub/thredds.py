@@ -133,8 +133,14 @@ class Dataset(object):
     def dates(self):
         datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml", auth=self.auth)
         soup = BeautifulSoup(datasetDetailsGet.content, "lxml")
-        begin = soup.find("timespan").find("begin").text
-        end = soup.find("timespan").find("end").text
+        try:
+            begin = soup.find("timespan").find("begin").text
+        except AttributeError:
+            begin = None
+        try:
+            end = soup.find("timespan").find("end").text
+        except AttributeError:
+            end = None
         dates = {"start": begin, "end": end}
         logger.debug(f"dates={dates}")
         return dates
