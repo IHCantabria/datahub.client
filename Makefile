@@ -59,11 +59,11 @@ test: venv
 
 black: venv
 	source ${VENV_ACTIVATE}
-	python -m black $(shell git ls-files | grep -e .py;git ls-files --others --exclude-standard | grep -e .py)
+	python -m black $(shell git ls-files | grep -e "\w*.py\b";git ls-files --others --exclude-standard | grep -e "\w*.py\b")
 
 radon: venv
 	source ${VENV_ACTIVATE}
-	python -m radon cc $(shell git ls-files | grep -e .py;git ls-files --others --exclude-standard | grep -e .py)
+	python -m radon cc $(shell git ls-files | grep -e "\w*.py\b";git ls-files --others --exclude-standard | grep -e "\w*.py\b")
 
 release: venv black radon test
 	source ${VENV_ACTIVATE}
