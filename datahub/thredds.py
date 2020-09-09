@@ -3,6 +3,7 @@ import csv
 from datetime import datetime, timedelta
 from io import StringIO
 import json
+import math
 import requests
 import urllib.request
 
@@ -218,9 +219,23 @@ class Dataset(object):
             point = {}
             data_tags_xml = point_xml.find_all("data")
             for data_xml in data_tags_xml:
-                point.update({data_xml.attrs["name"]: data_xml.text})
+                real_value = self._real_value(data_xml.attrs["name"], data_xml.text, variables)
+                point.update(
+                    {
+                        data_xml.attrs["name"]: real_value
+                    }
+                )
             points.append(point)
         return points
+
+    def _real_value(self, name, value, variables):
+        for variable in variables:
+            if variable["nameShort"] == name:
+                if "scaleFactor" in variable:
+                    value = float(value) * variable["scaleFactor"]
+                if "offset" in variable:
+                    value = float(value) + variable["offset"]
+        return value
 
     def download(self, coordinates, dates, variables, filename, formato="netcdf"):
         ncss_coordinates = self._coordinates_to_string(coordinates)

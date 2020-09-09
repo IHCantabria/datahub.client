@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 (2020.09.09)
+### Bugfix
+- Calculate correct value using offset and scale factor.
+
 ## 0.2.1 (2020.06.29)
 ### Bugfix
 - Remove `pkg-resources==0.0.0` from `requirements.txt`.
