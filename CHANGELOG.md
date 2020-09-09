@@ -4,6 +4,12 @@
 ### Bugfix
 - Calculate correct value using offset and scale factor.
 
+## 0.2.3 (2020.08.27)
+- Begin and end dates are optional
+- Fix product properties
+- Fix test result
+- Update linux instructions and add for windows
+  
 ## 0.2.1 (2020.06.29)
 ### Bugfix
 - Remove `pkg-resources==0.0.0` from `requirements.txt`.
