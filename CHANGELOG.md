@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2 (2020.10.01)
+### Bugfix
+- Fix test data (v0.3.1)
+
+### Features
+- Add new method `get_by_product_filtered_by_name` in Variable. (v0.3.2)
+
+
 ## 0.3.0 (2020.09.09)
 ### Bugfix
 - Calculate correct value using offset and scale factor.
@@ -19,14 +27,14 @@
 - Download dataset file as the original.
 
 ## 0.2.0 (2020.06.02)
-## Features
+### Features
 
-### Datahub
+#### Datahub
 * Consult product list
 * Get a product by id / name / alias
 * Get variables of a product
 
-### Thredds
+#### Thredds
 * Access a catalog based on a product
 * Access to protected catalogs with authentication.
 * Obtain characteristics of the dataset that make up the catalog (dates, areas)

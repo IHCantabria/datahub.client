@@ -25,6 +25,13 @@ class TestVariables(unittest.TestCase):
         variable = variables.get(-1)
         self.assertIsNone(variable)
 
+    def test_get_by_product_filtered_by_name(self):
+        names = ['thetao', 'so']
+        product = {'id': 7}
+        variables = Variables()
+        filtered_variables = variables.get_by_product_filtered_by_name(product, names)
+        n = len(filtered_variables)
+        self.assertEqual(n, len(names))
 
 if __name__ == "__main__":
     unittest.main()
