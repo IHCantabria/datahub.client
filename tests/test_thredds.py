@@ -8,8 +8,8 @@ class TestCatalog(unittest.TestCase):
         self.product = {
             "name": "GLOBAL_REANALYSIS_WAV_001_032",
             "urlBase": "https://ihthredds.ihcantabria.com",
-            "urlXmlLatest": "/thredds/catalog/copernicus/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/latest.xml",
-            "urlCatalog": "/thredds/catalog/copernicus/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/catalog.xml",
+            "urlXmlLatest": "/thredds/COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.xml?dataset=COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.nc",
+            "urlCatalog": "/thredds/COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.xml",
         }
         self.product_protected = {
             "name": "test",
