@@ -54,7 +54,7 @@ class Variables(object):
         except IndexError as ie:
             logger.error(ie)
             return None
-    
+
     def get_by_product_filtered_by_name(self, product, names):
         url_variables = (self.url_product_variables).format(id_product=product["id"])
 
@@ -73,4 +73,3 @@ class Variables(object):
                     filtered_variables.append(variable)
         logger.info(f"{len(filtered_variables)} variables found")
         return filtered_variables
-

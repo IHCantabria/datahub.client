@@ -141,15 +141,15 @@ class Dataset(object):
         self.http_url = url_httpserver
         self.auth = auth
 
-    
-    '''
+    """
     -32767 is the most common value for _fillValue. However some variable can have another value. 
     It's hardcode because the data is not available in datahub yet.
     TODO: When the value is in datahub, use that.
-    '''
+    """
+
     @property
     def _fillValue(self):
-        return -32767 
+        return -32767
 
     @property
     def dates(self):
@@ -229,16 +229,12 @@ class Dataset(object):
             point = {}
             data_tags_xml = point_xml.find_all("data")
             for data_xml in data_tags_xml:
-                real_value = self._real_value(data_xml.attrs["name"], data_xml.text, variables)
-                point.update(
-                    {
-                        data_xml.attrs["name"]: real_value
-                    }
+                real_value = self._real_value(
+                    data_xml.attrs["name"], data_xml.text, variables
                 )
+                point.update({data_xml.attrs["name"]: real_value})
             points.append(point)
         return points
-
-    
 
     def _real_value(self, name, value, variables):
         for variable in variables:
