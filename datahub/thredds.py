@@ -141,6 +141,16 @@ class Dataset(object):
         self.http_url = url_httpserver
         self.auth = auth
 
+    
+    '''
+    -32767 is the most common value for _fillValue. However some variable can have another value. 
+    It's hardcode because the data is not available in datahub yet.
+    TODO: When the value is in datahub, use that.
+    '''
+    @property
+    def _fillValue(self):
+        return -32767 
+
     @property
     def dates(self):
         datasetDetailsGet = requests.get(f"{self.ncss_url}/dataset.xml", auth=self.auth)
@@ -228,13 +238,18 @@ class Dataset(object):
             points.append(point)
         return points
 
+    
+
     def _real_value(self, name, value, variables):
         for variable in variables:
             if variable["nameShort"] == name:
-                if "scaleFactor" in variable:
-                    value = float(value) * variable["scaleFactor"]
-                if "offset" in variable:
-                    value = float(value) + variable["offset"]
+                if float(value) == self._fillValue:
+                    value = None
+                else:
+                    if "scaleFactor" in variable:
+                        value = float(value) * variable["scaleFactor"]
+                    if "offset" in variable:
+                        value = float(value) + variable["offset"]
         return value
 
     def download(self, coordinates, dates, variables, filename, formato="netcdf"):
