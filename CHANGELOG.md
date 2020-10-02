@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 (2020.10.02)
+### Features
+- Replace values == _fillvalue with None
+
 ## 0.3.2 (2020.10.01)
 ### Bugfix
 - Fix test data (v0.3.1)
