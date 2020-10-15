@@ -4,8 +4,10 @@ from datetime import datetime, timedelta
 from io import StringIO
 import json
 import math
+import os
 import requests
 import urllib.request
+import xarray
 
 from xml.etree import ElementTree
 
@@ -98,8 +100,42 @@ class Catalog(object):
             dataset = datasets_for_download[0]
             name = dataset.download(coordinates, dates, variables, filename, formato)
             filenames.append(name)
-        logger.info(f"downloaded completed in {name}")
+        if formato == "netcdf" and len(coordinates.keys()) == 2:
+            self._fix_netcdf(filename, variables, dates)
+        logger.info("downloaded completed in {names}".format(names=",".join(filenames)))
         return filenames
+
+    def _fix_netcdf(self, filename, variables, dates):
+        """
+        Thredds doesn't write offset, scale factor and time when we request data for a point.
+        """
+        logger.debug(f"fix netcdf variables: {filename}")
+        dataset = xarray.open_dataset(filename)
+        for variable in variables:
+            logger.debug(
+                "Variable {name}: add_offset={offset}, scale_factor={scaleFactor}, date start={start}".format(
+                    name=variable["nameShort"],
+                    offset=variable["offset"],
+                    scaleFactor=variable["scaleFactor"],
+                    start=dates["start"],
+                )
+            )
+            dataset.variables[variable["nameShort"]].attrs["units"] = variable["offset"]
+            dataset.variables[variable["nameShort"]].attrs["add_offset"] = variable[
+                "offset"
+            ]
+            dataset.variables[variable["nameShort"]].attrs["scale_factor"] = variable[
+                "scaleFactor"
+            ]
+            dataset.variables["time"].encoding[
+                "units"
+            ] = f"hours since {dates['start']}"
+        dataset.swap_dims({"obs": "time"})
+        dataset.to_netcdf(f"{filename}-new.nc")
+        dataset.close()
+        os.remove(filename)
+        os.rename(f"{filename}-new.nc", filename)
+        logger.debug("netcdf is fixed")
 
     def _get_datasets_with_data(self, dates):
         dataset_ok = []
@@ -260,6 +296,7 @@ class Dataset(object):
             end=dates["end"],
             format=formato,
         )
+        logger.debug(f"ncssUrl={ncssUrl}")
         urllib.request.urlretrieve(ncssUrl, filename)
         logger.debug(f"dataset downloaded completed in {filename}")
         return filename
