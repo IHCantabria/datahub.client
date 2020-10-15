@@ -1,4 +1,5 @@
 import unittest
+import xarray
 from datahub.thredds import Catalog
 
 
@@ -82,6 +83,9 @@ class TestCatalog(unittest.TestCase):
         filename = "/tmp/test.nc"
         c = Catalog(self.product)
         filenames = c.download(coordinates, dates, self.variables, filename)
+        dataset = xarray.open_dataset(filename)
+        self.assertIsNotNone(dataset)
+        dataset.close()
         self.assertIn(filename, filenames)
 
     def test_download_point(self):
@@ -90,6 +94,10 @@ class TestCatalog(unittest.TestCase):
         filename = "/tmp/test-point.nc"
         c = Catalog(self.product)
         filenames = c.download(coordinates, dates, self.variables, filename)
+
+        dataset = xarray.open_dataset(filename)
+        self.assertIsNotNone(dataset)
+        dataset.close()
         self.assertIn(filename, filenames)
 
     def test_download_csv_point(self):

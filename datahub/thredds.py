@@ -120,7 +120,6 @@ class Catalog(object):
                     start=dates["start"],
                 )
             )
-            dataset.variables[variable["nameShort"]].attrs["units"] = variable["offset"]
             dataset.variables[variable["nameShort"]].attrs["add_offset"] = variable[
                 "offset"
             ]
@@ -130,9 +129,10 @@ class Catalog(object):
             dataset.variables["time"].encoding[
                 "units"
             ] = f"hours since {dates['start']}"
-        dataset.swap_dims({"obs": "time"})
-        dataset.to_netcdf(f"{filename}-new.nc")
-        dataset.close()
+
+        renamed = dataset.swap_dims({"obs": "time"})
+        renamed.to_netcdf(f"{filename}-new.nc")
+
         os.remove(filename)
         os.rename(f"{filename}-new.nc", filename)
         logger.debug("netcdf is fixed")
