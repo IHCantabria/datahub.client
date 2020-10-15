@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4 (2020.10.15)
+### Features
+- Add metadata info to netcdf (offset, scale factor and date)
+
 ## 0.3.3 (2020.10.02)
 ### Features
 - Replace values == _fillvalue with None
