@@ -81,11 +81,16 @@ class Catalog(object):
                     protocol=opendap_protocol,
                     dataset=dataset_xml.attrs["urlPath"],
                 )
+
+                protocols = {
+                    "ncss": urlPath,
+                    "httpserver": url_httpserver,
+                    "opendap": url_opendap,
+                }
+
                 name = dataset_xml.attrs["name"]
                 id = dataset_xml.attrs["ID"]
-                dataset = Dataset(
-                    name, id, urlPath, url_httpserver, url_opendap, self.auth
-                )
+                dataset = Dataset(name, id, protocols, self.auth)
                 datasets.append(dataset)
         logger.info(f"{len(datasets)} datasets found")
         return datasets
@@ -181,13 +186,13 @@ class Catalog(object):
 
 
 class Dataset(object):
-    def __init__(self, name, id, url, url_httpserver, url_opendap, auth):
+    def __init__(self, name, id, protocols, auth):
         self.name = name
         self.id = id
         # self.restrictAccess = restrictAccess
-        self.ncss_url = url
-        self.http_url = url_httpserver
-        self.opendap_url = url_opendap
+        self.ncss_url = protocols["ncss"]
+        self.http_url = protocols["httpserver"]
+        self.opendap_url = protocols["opendap"]
         self.auth = auth
 
     """
