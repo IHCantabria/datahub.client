@@ -48,12 +48,17 @@ class Catalog(object):
         services = soup.find_all("service")
         ncssPath = ""
         httpserver = ""
+        opendap_protocol = ""
         for service in services:
             if service.attrs["name"] == "ncss":
                 ncssPath = service.attrs["base"]
             if service.attrs["name"] == "http":
                 httpserver = service.attrs["base"]
-        logger.debug(f"ncssPath={ncssPath}")
+            if service.attrs["name"] == "odap":
+                opendap_protocol = service.attrs["base"]
+        logger.debug(
+            f"ncssPath={ncssPath}, httpserver={httpserver}, opendap={opendap_protocol}"
+        )
         datasets_xml = soup.find_all("dataset")
         datasets = []
         for dataset_xml in datasets_xml:
@@ -71,9 +76,16 @@ class Catalog(object):
                     httpserver=httpserver,
                     dataset=dataset_xml.attrs["urlPath"],
                 )
+                url_opendap = "{dns}{protocol}{dataset}".format(
+                    dns=self.urlBase,
+                    protocol=opendap_protocol,
+                    dataset=dataset_xml.attrs["urlPath"],
+                )
                 name = dataset_xml.attrs["name"]
                 id = dataset_xml.attrs["ID"]
-                dataset = Dataset(name, id, urlPath, url_httpserver, self.auth)
+                dataset = Dataset(
+                    name, id, urlPath, url_httpserver, url_opendap, self.auth
+                )
                 datasets.append(dataset)
         logger.info(f"{len(datasets)} datasets found")
         return datasets
@@ -169,12 +181,13 @@ class Catalog(object):
 
 
 class Dataset(object):
-    def __init__(self, name, id, url, url_httpserver, auth):
+    def __init__(self, name, id, url, url_httpserver, url_opendap, auth):
         self.name = name
         self.id = id
         # self.restrictAccess = restrictAccess
         self.ncss_url = url
         self.http_url = url_httpserver
+        self.opendap_url = url_opendap
         self.auth = auth
 
     """
@@ -323,3 +336,7 @@ class Dataset(object):
             text = f"&north={coordinates['north']}&east={coordinates['east']}&south={coordinates['south']}&west={coordinates['west']}"
         logger.debug(f"coordinates={text}")
         return text
+
+    def open_with_xarray(self):
+        logger.debug(f"opening {self.opendap_url}")
+        return xarray.open_dataset(self.opendap_url)
