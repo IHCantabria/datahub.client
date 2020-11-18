@@ -88,6 +88,22 @@ class TestCatalog(unittest.TestCase):
         dataset.close()
         self.assertIn(filename, filenames)
 
+    def test_open_with_xarray(self):
+        algeciras_pe_waves = {
+            "id": 50,
+            "name": "PE_WAVES",
+            "alias": "Algeciras PE WAVES",
+            "urlProduct": "/thredds/catalog/pewaves/Algeciras/catalog.html",
+            "urlBase": "https://ihthredds.ihcantabria.com",
+            "urlXmlLatest": "/thredds/catalog/pewaves/Algeciras/latest.xml",
+            "urlCatalog": "/thredds/catalog/pewaves/Algeciras/catalog.xml",
+        }
+        c = Catalog(algeciras_pe_waves)
+        dataset = c.datasets[0]
+        ds = dataset.open_with_xarray()
+        self.assertIsNotNone(ds)
+        ds.close()
+
     def test_download_point(self):
         coordinates = {"lon": 43.456, "lat": -2.883}
         dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
