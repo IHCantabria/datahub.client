@@ -64,10 +64,10 @@ class Products(object):
         response = requests.get(url_products)
         if response.ok:
             result = json.loads(response.content)
-            if var_names: 
-                data = self._filter_variables(result, var_names) 
+            if var_names:
+                data = self._filter_variables(result, var_names)
             else:
-                data=result
+                data = result
         else:
             logger.error(response.raise_for_status())
             raise response.raise_for_status()
