@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.6 (2020.10.16)
+### Features
+- Get variables from a product.
+- Filter variables using nameShort.
+
 ## 0.3.5 (2020.10.15)
 ### Features
 - Add metadata info to netcdf (offset, scale factor and date) (0.3.4)
