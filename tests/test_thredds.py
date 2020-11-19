@@ -100,7 +100,7 @@ class TestCatalog(unittest.TestCase):
         }
         c = Catalog(algeciras_pe_waves)
         dataset = c.datasets[0]
-        ds = dataset.open_with_xarray()
+        ds = dataset.open_xarray_conn()
         self.assertIsNotNone(ds)
         ds.close()
 

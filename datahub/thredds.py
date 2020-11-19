@@ -345,6 +345,6 @@ class Dataset(object):
         logger.debug(f"coordinates={text}")
         return text
 
-    def open_with_xarray(self):
+    def open_xarray_conn(self):
         logger.debug(f"opening {self.opendap_url}")
         return xarray.open_dataset(self.opendap_url)
