@@ -81,7 +81,6 @@ class Catalog(object):
                     protocol=opendap_protocol,
                     dataset=dataset_xml.attrs["urlPath"],
                 )
-
                 protocols = {
                     "ncss": urlPath,
                     "httpserver": url_httpserver,
@@ -183,6 +182,10 @@ class Catalog(object):
             text = f"&north={coordinates['north']}&east={coordinates['east']}&south={coordinates['south']}&west={coordinates['west']}"
         logger.debug(f"coordinates={coordinates}")
         return text
+
+    def open_xarray_conn(self, coordinates=None, dates=None):
+        list_conn = [dataset.opendap_url for dataset in self.datasets]
+        return xarray.open_mfdataset(list_conn)
 
 
 class Dataset(object):
