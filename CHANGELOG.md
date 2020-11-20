@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.3.6 (2020.10.16)
+## 0.4.0 (2020.11.20)
+- Get xarray connection from a dataset.
+- Get xarray connection of the datasets from a catalog.
+
+## 0.3.6 (2020.11.16)
 ### Features
 - Get variables from a product.
 - Filter variables using nameShort.
