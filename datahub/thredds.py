@@ -185,6 +185,7 @@ class Catalog(object):
 
     def open_xarray_conn(self, coordinates=None, dates=None):
         list_conn = [dataset.opendap_url for dataset in self.datasets]
+        logger.debug(f"opening: {','.join(list_conn)}")
         return xarray.open_mfdataset(list_conn)
 
 
