@@ -40,6 +40,63 @@ class Catalog(object):
         return url
 
     @property
+    def latest(self):
+        productLatest = requests.get(
+            self.url.replace("catalog.xml", "latest.xml"), auth=self.auth
+        )
+        bxml = productLatest.content
+
+        soup = BeautifulSoup(bxml, "xml")
+        services = soup.find_all("service")
+        ncssPath = ""
+        httpserver = ""
+        opendap_protocol = ""
+        for service in services:
+            if service.attrs["name"] == "ncss":
+                ncssPath = service.attrs["base"]
+            if service.attrs["name"] == "http":
+                httpserver = service.attrs["base"]
+            if service.attrs["name"] == "odap":
+                opendap_protocol = service.attrs["base"]
+        logger.debug(
+            f"ncssPath={ncssPath}, httpserver={httpserver}, opendap={opendap_protocol}"
+        )
+        datasets_xml = soup.find_all("dataset")
+        dataset_latest = None
+        for dataset_xml in datasets_xml:
+
+            urlPath = "{dns}{ncss}{dataset}".format(
+                dns=self.urlBase,
+                ncss=ncssPath,
+                dataset=dataset_xml.attrs["urlPath"],
+            )
+            url_httpserver = "{dns}{httpserver}{dataset}".format(
+                dns=self.urlBase,
+                httpserver=httpserver,
+                dataset=dataset_xml.attrs["urlPath"],
+            )
+            url_opendap = "{dns}{protocol}{dataset}".format(
+                dns=self.urlBase,
+                protocol=opendap_protocol,
+                dataset=dataset_xml.attrs["urlPath"],
+            )
+            protocols = {
+                "ncss": urlPath,
+                "httpserver": url_httpserver,
+                "opendap": url_opendap,
+            }
+
+            name = dataset_xml.attrs["name"]
+            id = dataset_xml.attrs["ID"]
+            dataset = Dataset(name, id, protocols, self.auth)
+            dataset_latest = dataset
+            logger.info(f"latest dataset found")
+            return dataset_latest
+
+        logger.info(f"latest not dataset found")
+        return dataset_latest
+
+    @property
     def datasets(self):
         productLatest = requests.get(self.url, auth=self.auth)
         bxml = productLatest.content
