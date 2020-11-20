@@ -1,5 +1,9 @@
 # Changelog
 
+
+## 0.5.0 (2020.11.20)
+- Add latest dataset as a catalog property
+
 ## 0.4.0 (2020.11.20)
 - Get xarray connection from a dataset.
 - Get xarray connection of the datasets from a catalog.
