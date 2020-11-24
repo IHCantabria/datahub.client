@@ -414,10 +414,12 @@ class Dataset(object):
         logger.debug(f"opening {self.opendap_url}")
         ds = xarray.open_dataset(self.opendap_url)
         if dates:
+            start = dates["start"] if "start" in dates else None
+            end = dates["end"] if "end" in dates else None
             if "time" in ds.dims:
-                ds = ds.sel(time=slice(dates["start"], dates["end"]))
+                ds = ds.sel(time=slice(start, end))
             elif "t" in ds.dims:
-                ds = ds.sel(t=slice(dates["start"], dates["end"]))
+                ds = ds.sel(t=slice(start, end))
         if extent:
             if "longitud" in ds.dims:
                 ds = ds.sel(
