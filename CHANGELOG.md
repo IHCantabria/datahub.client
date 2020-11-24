@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.1 (2020.11.24)
+- start and end are optional opening a xarray connection
+
 ## 0.6.0 (2020.11.23)
 - Filter xarray dataset by date and extent
 - Add credential data to opendap url.
