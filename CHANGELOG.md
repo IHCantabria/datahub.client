@@ -2,6 +2,7 @@
 
 ## 0.6.1 (2020.11.24)
 - start and end are optional opening a xarray connection
+- fix open_xarray_conn in catalog
 
 ## 0.6.0 (2020.11.23)
 - Filter xarray dataset by date and extent

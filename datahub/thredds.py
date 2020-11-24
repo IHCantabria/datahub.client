@@ -249,7 +249,24 @@ class Catalog(object):
         list_conn = [dataset.opendap_url for dataset in self.datasets]
         logger.debug(f"opening: {','.join(list_conn)}")
         ds = xarray.open_mfdataset(list_conn)
-        ds = self._filter_by_dates_extent(dates=dates, extent=extent)
+        if dates:
+            start = dates["start"] if "start" in dates else None
+            end = dates["end"] if "end" in dates else None
+            if "time" in ds.dims:
+                ds = ds.sel(time=slice(start, end))
+            elif "t" in ds.dims:
+                ds = ds.sel(t=slice(start, end))
+        if extent:
+            if "longitud" in ds.dims:
+                ds = ds.sel(
+                    longitude=slice(extent["west"], extent["east"]),
+                    latitude=slice(extent["south"], extent["north"]),
+                )
+            elif "lon" in ds.dims:
+                ds = ds.sel(
+                    lon=slice(extent["west"], extent["east"]),
+                    lat=slice(extent["south"], extent["north"]),
+                )
         return ds
 
 
