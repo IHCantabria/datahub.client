@@ -21,3 +21,11 @@ class Config(object):
             if auth["catalog"] == catalog_name:
                 return auth
         return None
+
+    @classmethod
+    def get_auth_for_opendap(self, url, auth):
+        # ToDo: Test
+        if "http://" in url:
+            return url.replace("http://", f"http://{auth.username}:{auth.password}@")
+        elif "https://" in url:
+            return url.replace("https://", f"https://{auth.username}:{auth.password}@")

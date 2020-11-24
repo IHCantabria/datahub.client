@@ -80,6 +80,8 @@ class Catalog(object):
                 protocol=opendap_protocol,
                 dataset=dataset_xml.attrs["urlPath"],
             )
+            if self.auth:
+                url_opendap = Config.get_auth_for_opendap(url_opendap, self.auth)
             protocols = {
                 "ncss": urlPath,
                 "httpserver": url_httpserver,
@@ -138,6 +140,8 @@ class Catalog(object):
                     protocol=opendap_protocol,
                     dataset=dataset_xml.attrs["urlPath"],
                 )
+                if self.auth:
+                    url_opendap = Config.get_auth_for_opendap(url_opendap, self.auth)
                 protocols = {
                     "ncss": urlPath,
                     "httpserver": url_httpserver,
@@ -240,10 +244,13 @@ class Catalog(object):
         logger.debug(f"coordinates={coordinates}")
         return text
 
-    def open_xarray_conn(self, coordinates=None, dates=None):
+    def open_xarray_conn(self, dates=None, extent=None):
+
         list_conn = [dataset.opendap_url for dataset in self.datasets]
         logger.debug(f"opening: {','.join(list_conn)}")
-        return xarray.open_mfdataset(list_conn)
+        ds = xarray.open_mfdataset(list_conn)
+        ds = self._filter_by_dates_extent(dates=dates, extent=extent)
+        return ds
 
 
 class Dataset(object):
@@ -403,6 +410,23 @@ class Dataset(object):
         logger.debug(f"coordinates={text}")
         return text
 
-    def open_xarray_conn(self):
+    def open_xarray_conn(self, dates=None, extent=None):
         logger.debug(f"opening {self.opendap_url}")
-        return xarray.open_dataset(self.opendap_url)
+        ds = xarray.open_dataset(self.opendap_url)
+        if dates:
+            if "time" in ds.dims:
+                ds = ds.sel(time=slice(dates["start"], dates["end"]))
+            elif "t" in ds.dims:
+                ds = ds.sel(t=slice(dates["start"], dates["end"]))
+        if extent:
+            if "longitud" in ds.dims:
+                ds = ds.sel(
+                    longitude=slice(extent["west"], extent["east"]),
+                    latitude=slice(extent["south"], extent["north"]),
+                )
+            elif "lon" in ds.dims:
+                ds = ds.sel(
+                    lon=slice(extent["west"], extent["east"]),
+                    lat=slice(extent["south"], extent["north"]),
+                )
+        return ds

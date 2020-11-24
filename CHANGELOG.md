@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.0 (2020.11.23)
+- Filter xarray dataset by date and extent
+- Add credential data to opendap url.
 
 ## 0.5.0 (2020.11.20)
 - Add latest dataset as a catalog property
