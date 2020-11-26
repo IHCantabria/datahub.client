@@ -6,7 +6,7 @@
     },
     "restrictAccess": [
         {
-            "catalog": "test",
+            "catalog": 194,
             "user": "test",
             "password": "test99%"
         }

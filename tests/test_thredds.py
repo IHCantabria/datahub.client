@@ -7,12 +7,14 @@ class TestCatalog(unittest.TestCase):
     def setUp(self):
         self.id = 7
         self.product = {
+            "id": 7,
             "name": "GLOBAL_REANALYSIS_WAV_001_032",
             "urlBase": "https://ihthredds.ihcantabria.com",
             "urlXmlLatest": "/thredds/COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.xml?dataset=COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.nc",
             "urlCatalog": "/thredds/COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.xml",
         }
         self.product_protected = {
+            "id": 194,
             "name": "test",
             "urlBase": "https://ihthredds.ihcantabria.com",
             "urlXmlLatest": "/thredds/catalog/test/catalog.xml?dataset=test/null_island_test.nc",

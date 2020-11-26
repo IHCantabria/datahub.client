@@ -16,9 +16,9 @@ class Config(object):
         except Exception as ex:
             logger.error(ex)
 
-    def get_auth_for_catalog(self, catalog_name):
+    def get_auth_for_catalog(self, catalog_id):
         for auth in self.__restrictAccess:
-            if auth["catalog"] == catalog_name:
+            if auth["catalog"] == catalog_id:
                 return auth
         return None
 
