@@ -1,8 +1,11 @@
 # Changelog
 
 ## 0.7.0 (2020.11.26)
+- Remove Products.get_by_name_alias method
+- Add Products.filter method
 - Auth config using id instead of name.
 - Auth using a tuple as parameter auth=(user,pw)
+
 
 ## 0.6.1 (2020.11.24)
 - start and end are optional opening a xarray connection

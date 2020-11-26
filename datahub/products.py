@@ -29,14 +29,18 @@ class Products(object):
             logger.error(ie)
             return None
 
-    def get_by_name_alias(self, name):
+    def filter(self, name=None, alias=None):
         products = self.get_all()
+        products_match = []
         for product in products:
-            if product["name"] == name or product["alias"] == name:
+
+            if name and name in product["name"]:
                 logger.info(f"Product found, id={product['id']}")
-                return product
-        logger.info(f"Product not found")
-        return None
+                products_match.append(product)
+            elif alias and alias in product["alias"]:
+                logger.info(f"Product found, id={product['id']}")
+                products_match.append(product)
+        return products_match
 
     def get_all(self, lon_min=None, lat_min=None, lon_max=None, lat_max=None):
         params = self._set_filters(lon_min, lat_min, lon_max, lat_max)

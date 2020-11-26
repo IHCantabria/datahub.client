@@ -18,30 +18,6 @@ class TestProducts(unittest.TestCase):
         product = p.get(id)
         self.assertIsNone(product)
 
-    def test_get_product_by_name(self):
-        name = "GLOBAL_REANALYSIS_PHY_001_030"
-        p = Products()
-        product = p.get_by_name_alias(name)
-        self.assertIsNotNone(product)
-
-    def test_get_product_by_name_ko(self):
-        name = "FAKE_GLOBAL_REANALYSIS_PHY_001_030"
-        p = Products()
-        product = p.get_by_name_alias(name)
-        self.assertIsNone(product)
-
-    def test_get_product_by_alias(self):
-        alias = "GLOBAL REANALYSIS PHY 001 030"
-        p = Products()
-        product = p.get_by_name_alias(alias)
-        self.assertIsNotNone(product)
-
-    def test_get_product_by_alias_ko(self):
-        alias = "FAKE GLOBAL REANALYSIS PHY 001 030"
-        p = Products()
-        product = p.get_by_name_alias(alias)
-        self.assertIsNone(product)
-
     def test_get_all(self):
         p = Products()
         all_products = p.get_all()
@@ -71,6 +47,30 @@ class TestProducts(unittest.TestCase):
         p = Products()
         with self.assertRaises(Exception):
             p.get_variables(invalid_product)
+
+    def test_filter_name(self):
+        match = Products().filter(name="test")
+        self.assertEqual(len(match), 1)
+
+    def test_filter_name_partial(self):
+        match = Products().filter(name="tes")
+        self.assertEqual(len(match), 1)
+
+    def test_filter_name_ko(self):
+        match = Products().filter(name="test_ko")
+        self.assertEqual(len(match), 0)
+
+    def test_filter_alias(self):
+        match = Products().filter(alias="test")
+        self.assertEqual(len(match), 1)
+
+    def test_filter_alias_partial(self):
+        match = Products().filter(alias="tes")
+        self.assertEqual(len(match), 1)
+
+    def test_filter_alias_ko(self):
+        match = Products().filter(alias="test_ko")
+        self.assertEqual(len(match), 0)
 
 
 if __name__ == "__main__":
