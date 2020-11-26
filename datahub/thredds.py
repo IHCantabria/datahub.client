@@ -9,6 +9,7 @@ import requests
 import urllib.request
 import xarray
 
+from requests.auth import HTTPBasicAuth
 from xml.etree import ElementTree
 
 from datahub.config import Config
@@ -18,20 +19,22 @@ logger = utils.get_logger(__name__)
 
 
 class Catalog(object):
-    def __init__(self, product):
+    def __init__(self, product, auth=None):
         self.urlBase = product["urlBase"]
         self.urlXmlLatest = product["urlXmlLatest"]
         self.urlCatalog = product["urlCatalog"]
 
         configuration = Config()
+
         self.auth = ()
-        auth_json = configuration.get_auth_for_catalog(product["id"])
-
-        if auth_json:
-            from requests.auth import HTTPBasicAuth
-
-            self.auth = HTTPBasicAuth(auth_json["user"], auth_json["password"])
+        if auth:
+            self.auth = HTTPBasicAuth(auth[0], auth[1])
             logger.debug("Using auth")
+        else:
+            auth_json = configuration.get_auth_for_catalog(product["id"])
+            if auth_json:
+                self.auth = HTTPBasicAuth(auth_json["user"], auth_json["password"])
+                logger.debug("Using auth")
 
     @property
     def url(self):

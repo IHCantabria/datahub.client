@@ -79,6 +79,15 @@ class TestCatalog(unittest.TestCase):
         n = len(points)
         self.assertEqual(n, 1)
 
+    def test_data_protected_auth_parameter(self):
+        coordinates = {"lat": 0.2, "lon": 0.2}
+        dates = None
+        auth = ("test", "test99%")
+        c = Catalog(self.product_protected, auth=auth)
+        points = c.data(coordinates, dates, self.variables_test)
+        n = len(points)
+        self.assertEqual(n, 1)
+
     def test_download_extent(self):
         coordinates = {"north": 43.456, "east": -2.883, "south": 43, "west": -3}
         dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}

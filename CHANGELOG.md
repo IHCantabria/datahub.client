@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0 (2020.11.26)
+- Auth config using id instead of name.
+- Auth using a tuple as parameter auth=(user,pw)
+
 ## 0.6.1 (2020.11.24)
 - start and end are optional opening a xarray connection
 - fix open_xarray_conn in catalog
