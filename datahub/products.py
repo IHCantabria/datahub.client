@@ -2,12 +2,15 @@ import json
 import requests
 
 from datahub.config import Config
+from datahub.product import Product
 from datahub import utils
 
 logger = utils.get_logger(__name__)
 
 
 class Products(object):
+    url = None
+
     def __init__(self):
         configuration = Config()
         self.url = configuration.URLs["products"]
@@ -22,9 +25,9 @@ class Products(object):
             logger.error(response.raise_for_status())
             raise response.raise_for_status()
         try:
-            product_json = data[0]
-            logger.info(f"Product found, id={product_json['id']}")
-            return product_json
+            product = Product(data[0])
+            logger.info(f"Product found, {product}")
+            return product
         except IndexError as ie:
             logger.error(ie)
             return None
@@ -34,11 +37,11 @@ class Products(object):
         products_match = []
         for product in products:
 
-            if name and name in product["name"]:
-                logger.info(f"Product found, id={product['id']}")
+            if name and name.upper() in product.name.upper():
+                logger.info(f"Product found, id={product}")
                 products_match.append(product)
-            elif alias and alias in product["alias"]:
-                logger.info(f"Product found, id={product['id']}")
+            elif alias and alias.upper() in product.alias.upper():
+                logger.info(f"Product found, id={product}")
                 products_match.append(product)
         return products_match
 
@@ -54,16 +57,16 @@ class Products(object):
         response = requests.get(url_products)
         if response.ok:
             data = json.loads(response.content)
+            products = [Product(product_json) for product_json in data]
         else:
             logger.error(response.raise_for_status())
             raise response.raise_for_status()
-        logger.info(f"{len(data)} products found")
-        return data
+
+        logger.info(f"{len(products)} products found")
+        return products
 
     def get_variables(self, product, var_names=None):
-        url_products = "{url}/{id}/Variables".format(
-            url=self.url, id=str(product["id"])
-        )
+        url_products = "{url}/{id}/Variables".format(url=self.url, id=str(product.id))
 
         response = requests.get(url_products)
         if response.ok:
@@ -81,7 +84,7 @@ class Products(object):
     def _filter_variables(self, variables, var_names):
         variables_ok = []
         for variable in variables:
-            if variable["nameShort"] in var_names:
+            if variable.nameShort in var_names:
                 variables_ok.append(variable)
         return variables_ok
 

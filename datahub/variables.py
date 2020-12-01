@@ -2,6 +2,7 @@ import json
 import requests
 
 from datahub.config import Config
+from datahub.variable import Variable
 from datahub import utils
 
 logger = utils.get_logger(__name__)
@@ -20,11 +21,12 @@ class Variables(object):
         response = requests.get(self.url_variables)
         if response.ok:
             data = json.loads(response.content)
+            variables = [Variable(variable_json) for variable_json in data]
         else:
             logger.error(response.raise_for_status())
             raise response.raise_for_status()
-        logger.info(f"{len(data)} variables found")
-        return data
+        logger.info(f"{len(variables)} variables found")
+        return variables
 
     def get_all_by_product(self, id_product):
         url_variables = (self.url_product_variables).format(id_product=id_product)
@@ -32,11 +34,12 @@ class Variables(object):
         response = requests.get(url_variables)
         if response.ok:
             data = json.loads(response.content)
+            variables = [Variable(variable_json) for variable_json in data]
         else:
             response.raise_for_status()
             raise response.raise_for_status()
         logger.info(f"{len(data)} variables found")
-        return data
+        return variables
 
     def get(self, id_variable):
         url = "{url}/{id}".format(url=self.url_variables, id=id_variable)

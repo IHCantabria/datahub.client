@@ -6,9 +6,9 @@
     },
     "restrictAccess": [
         {
-            "catalog": 194,
-            "user": "test",
-            "password": "test99%"
+            "catalog": 198,
+            "user": "datahub",
+            "password": "datahubpassword"
         }
     ]
 }

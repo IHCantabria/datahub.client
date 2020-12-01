@@ -1,114 +1,68 @@
 import unittest
 import xarray
-from datahub.thredds import Catalog
+from datahub.products import Products
+from datahub.catalog import Catalog
+from datahub import utils
 
 
 class TestCatalog(unittest.TestCase):
     def setUp(self):
-        self.id = 7
-        self.product = {
-            "id": 7,
-            "name": "GLOBAL_REANALYSIS_WAV_001_032",
-            "urlBase": "https://ihthredds.ihcantabria.com",
-            "urlXmlLatest": "/thredds/COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.xml?dataset=COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.nc",
-            "urlCatalog": "/thredds/COPERNICUS/CMEMS/GLOBAL_REANALYSIS_WAV_001_032/GLOBAL_REANALYSIS_WAV_001_032.xml",
+        self.id = 198
+        self.product = Products().get(198)
+        self.start = utils.string_to_datetime("2020-11-24T00:00:00Z")
+        self.end = utils.string_to_datetime("2020-12-24T12:00:00Z")
+        self.dates = {"start": self.start, "end": self.end}
+        self.coordinates_point = {"lat": 43.456, "lon": -2.883}
+        self.coordinates_area = {
+            "north": 43.456,
+            "east": -2.883,
+            "south": 43,
+            "west": -3,
         }
-        self.product_protected = {
-            "id": 194,
-            "name": "test",
-            "urlBase": "https://ihthredds.ihcantabria.com",
-            "urlXmlLatest": "/thredds/catalog/test/catalog.xml?dataset=test/null_island_test.nc",
-            "urlCatalog": "/thredds/catalog/test/catalog.xml",
-        }
-        self.variables = [
-            {
-                "id": 317,
-                "nameShort": "VTPK",
-                "nameLong": "Wave period at spectral peak / peak period (Tp)",
-                "alias": "Wave period at spectral peak / peak period (Tp)",
-                "units": "s",
-                "idVariableTypes": 1,
-                "scaleFactor": 0.01,
-                "offset": 0.0,
-                "productVariable": [],
-            },
-            {
-                "id": 316,
-                "nameShort": "VMDR",
-                "nameLong": "Mean wave direction from (Mdir)",
-                "alias": "Mean wave direction from (Mdir)",
-                "units": "\u00ba",
-                "idVariableTypes": 1,
-                "scaleFactor": 0.01,
-                "offset": 180.0,
-                "productVariable": [],
-            },
-        ]
-        self.variables_test = [
-            {
-                "id": 356,
-                "nameShort": "test",
-                "nameLong": "test",
-                "alias": "Test",
-                "units": "test",
-                "idVariableTypes": 2,
-                "scaleFactor": 1.0,
-                "offset": 0.0,
-                "productVariable": [],
-            }
-        ]
 
     def test_get_datasets(self):
         c = Catalog(self.product)
         n = len(c.datasets)
-        self.assertEqual(n, 1)
+        self.assertEqual(n, 4)
 
-    def test_data(self):
-        coordinates = {"lat": 43.456, "lon": -2.883}
-        dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
+    def test_data_latest(self):
         c = Catalog(self.product)
-        points = c.data(coordinates, dates, self.variables)
+        variables = self.product.variables
+        points = c.latest.data(self.coordinates_point, self.dates, variables)
         n = len(points)
-        self.assertEqual(n, 5)
+        self.assertEqual(n, 81)
 
-    def test_data_protected(self):
-        coordinates = {"lat": 0.2, "lon": 0.2}
-        dates = None
-        c = Catalog(self.product_protected)
-        points = c.data(coordinates, dates, self.variables_test)
-        n = len(points)
-        self.assertEqual(n, 1)
+    # def test_data_protected(self):
+    #     coordinates = {"lat": 0.2, "lon": 0.2}
+    #     dates = None
+    #     c = Catalog(self.product_protected)
+    #     points = c.data(coordinates, dates, self.variables_test)
+    #     n = len(points)
+    #     self.assertEqual(n, 1)
 
-    def test_data_protected_auth_parameter(self):
-        coordinates = {"lat": 0.2, "lon": 0.2}
-        dates = None
-        auth = ("test", "test99%")
-        c = Catalog(self.product_protected, auth=auth)
-        points = c.data(coordinates, dates, self.variables_test)
-        n = len(points)
-        self.assertEqual(n, 1)
+    # def test_data_protected_auth_parameter(self):
+    #     coordinates = {"lat": 0.2, "lon": 0.2}
+    #     dates = None
+    #     auth = ("test", "test99%")
+    #     c = Catalog(self.product_protected, auth=auth)
+    #     points = c.data(coordinates, dates, self.variables_test)
+    #     n = len(points)
+    #     self.assertEqual(n, 1)
 
-    def test_download_extent(self):
-        coordinates = {"north": 43.456, "east": -2.883, "south": 43, "west": -3}
-        dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
+    def test_download_extent_latest(self):
         filename = "/tmp/test.nc"
         c = Catalog(self.product)
-        filenames = c.download(coordinates, dates, self.variables, filename)
+        variables = self.product.variables
+        filenames = c.latest.download(
+            self.coordinates_area, self.dates, variables, filename
+        )
         dataset = xarray.open_dataset(filename)
         self.assertIsNotNone(dataset)
         dataset.close()
         self.assertIn(filename, filenames)
 
     def test_open_with_xarray(self):
-        algeciras_pe_waves = {
-            "id": 50,
-            "name": "PE_WAVES",
-            "alias": "Algeciras PE WAVES",
-            "urlProduct": "/thredds/catalog/pewaves/Algeciras/catalog.html",
-            "urlBase": "https://ihthredds.ihcantabria.com",
-            "urlXmlLatest": "/thredds/catalog/pewaves/Algeciras/latest.xml",
-            "urlCatalog": "/thredds/catalog/pewaves/Algeciras/catalog.xml",
-        }
+        algeciras_pe_waves = self.product
         c = Catalog(algeciras_pe_waves)
         dataset = c.datasets[0]
         ds = dataset.open_xarray_conn()
@@ -116,29 +70,31 @@ class TestCatalog(unittest.TestCase):
         ds.close()
 
     def test_download_point(self):
-        coordinates = {"lon": 43.456, "lat": -2.883}
-        dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
         filename = "/tmp/test-point.nc"
         c = Catalog(self.product)
-        filenames = c.download(coordinates, dates, self.variables, filename)
+        variables = self.product.variables
+        filenames = c.latest.download(
+            self.coordinates_point, self.dates, variables, filename
+        )
 
         dataset = xarray.open_dataset(filename)
         self.assertIsNotNone(dataset)
         dataset.close()
         self.assertIn(filename, filenames)
 
-    def test_download_csv_point(self):
-        coordinates = {"lon": 43.456, "lat": -2.883}
-        dates = {"start": "2018-12-24T00:00:00", "end": "2018-12-24T12:00:00"}
+    def test_download_csv_point_latest(self):
         filename = "/tmp/test.csv"
         c = Catalog(self.product)
-        filenames = c.download(coordinates, dates, self.variables, filename, "csv")
+        variables = self.product.variables
+        filenames = c.latest.download(
+            self.coordinates_point, self.dates, variables, filename, "csv"
+        )
         self.assertIn(filename, filenames)
 
     def test_download_raw(self):
         local_path = "/tmp/test.nc"
-        catalog = Catalog(self.product_protected)
-        dataset = catalog.datasets[0]
+        catalog = Catalog(Products().get(8))
+        dataset = catalog.latest
         path = dataset.download_raw(local_path)
         self.assertEqual(local_path, path)
 

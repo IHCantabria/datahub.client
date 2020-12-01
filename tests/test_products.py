@@ -4,13 +4,11 @@ from datahub.products import Products
 
 class TestProducts(unittest.TestCase):
     def setUp(self):
-        self.id = 7
+        self.id = 198
 
     def test_get_product(self):
-        id = 7
-        p = Products()
-        product = p.get(id)
-        self.assertEqual(id, product["id"])
+        product = Products().get(self.id)
+        self.assertIsNotNone(product)
 
     def test_get_product_invalid_id(self):
         id = -5
@@ -40,7 +38,7 @@ class TestProducts(unittest.TestCase):
         product = p.get(self.id)
         variables = p.get_variables(product)
         n = len(variables)
-        self.assertEqual(n, 5)
+        self.assertEqual(n, 3)
 
     def test_get_variables_no_product(self):
         invalid_product = {}
@@ -49,24 +47,24 @@ class TestProducts(unittest.TestCase):
             p.get_variables(invalid_product)
 
     def test_filter_name(self):
-        match = Products().filter(name="test")
-        self.assertEqual(len(match), 1)
+        match = Products().filter(name="datahubTests")
+        self.assertEqual(match[0].id, self.id)
 
     def test_filter_name_partial(self):
-        match = Products().filter(name="tes")
-        self.assertEqual(len(match), 1)
+        match = Products().filter(name="datahub")
+        self.assertEqual(match[0].id, self.id)
 
     def test_filter_name_ko(self):
-        match = Products().filter(name="test_ko")
+        match = Products().filter(name="datahub_ko")
         self.assertEqual(len(match), 0)
 
     def test_filter_alias(self):
-        match = Products().filter(alias="test")
-        self.assertEqual(len(match), 1)
+        match = Products().filter(alias="Cantabrico")
+        self.assertGreaterEqual(len(match), 1)
 
     def test_filter_alias_partial(self):
-        match = Products().filter(alias="tes")
-        self.assertEqual(len(match), 1)
+        match = Products().filter(alias="Cantab")
+        self.assertGreaterEqual(len(match), 1)
 
     def test_filter_alias_ko(self):
         match = Products().filter(alias="test_ko")
