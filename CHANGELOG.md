@@ -3,29 +3,30 @@
 ## 0.7.0 (2020.11.26)
 - Remove Products.get_by_name_alias method
 - Add Products.filter method
-- Auth config using id instead of name.
+- Dates are datetime, not str
+- Auth config using id instead of name
 - Auth using a tuple as parameter auth=(user,pw)
-
-
+- Add str and repr method to classes
+  
 ## 0.6.1 (2020.11.24)
 - start and end are optional opening a xarray connection
 - fix open_xarray_conn in catalog
 
 ## 0.6.0 (2020.11.23)
 - Filter xarray dataset by date and extent
-- Add credential data to opendap url.
+- Add credential data to opendap url
 
 ## 0.5.0 (2020.11.20)
 - Add latest dataset as a catalog property
 
 ## 0.4.0 (2020.11.20)
-- Get xarray connection from a dataset.
-- Get xarray connection of the datasets from a catalog.
+- Get xarray connection from a dataset
+- Get xarray connection of the datasets from a catalog
 
 ## 0.3.6 (2020.11.16)
 ### Features
-- Get variables from a product.
-- Filter variables using nameShort.
+- Get variables from a product
+- Filter variables using nameShort
 
 ## 0.3.5 (2020.10.15)
 ### Features
