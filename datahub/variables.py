@@ -52,8 +52,9 @@ class Variables(object):
             raise response.raise_for_status()
         try:
             variable_json = data[0]
+            variable = Variable(variable_json)
             logger.info(f"Variable found, id={variable_json['id']}")
-            return variable_json
+            return variable
         except IndexError as ie:
             logger.error(ie)
             return None

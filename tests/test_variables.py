@@ -18,7 +18,7 @@ class TestVariables(unittest.TestCase):
     def test_get(self):
         variables = Variables()
         variable = variables.get(self.id_variable)
-        self.assertIsNotNone(variable)
+        self.assertEqual(variable.id, self.id_variable)
 
     def test_get_ko(self):
         variables = Variables()
