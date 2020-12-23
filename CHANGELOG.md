@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.2
+- Fix Variables returning variable objects
+
 ## 0.7.0 (2020.11.26)
 - Remove Products.get_by_name_alias method
 - Add Products.filter method

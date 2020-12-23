@@ -53,7 +53,8 @@ class Variables(object):
         try:
             variable_json = data[0]
             logger.info(f"Variable found, id={variable_json['id']}")
-            return variable_json
+            variable_obj = Variable(variable_json)
+            return variable_obj
         except IndexError as ie:
             logger.error(ie)
             return None
@@ -63,16 +64,17 @@ class Variables(object):
 
         response = requests.get(url_variables)
         if response.ok:
-            variables = json.loads(response.content)
+            variables_json = json.loads(response.content)
         else:
             response.raise_for_status()
             raise response.raise_for_status()
         filtered_variables = []
-        for variable in variables:
+        for variable_json in variables_json:
+            variable_obj = Variable(variable_json)
             for name in names:
-                if variable["nameShort"] == name:
-                    filtered_variables.append(variable)
-                elif variable["nameLong"] == name:
-                    filtered_variables.append(variable)
+                if variable_obj.nameShort == name:
+                    filtered_variables.append(variable_obj)
+                elif variable_obj.nameLong == name:
+                    filtered_variables.append(variable_obj)
         logger.info(f"{len(filtered_variables)} variables found")
         return filtered_variables
