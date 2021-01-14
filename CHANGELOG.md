@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.7.3
+- Fix lxml dependency
 ## 0.7.2
 - Fix Variables returning variable objects
 
