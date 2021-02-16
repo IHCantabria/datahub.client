@@ -62,10 +62,8 @@ class TestCatalog(unittest.TestCase):
         self.assertIn(filename, filenames)
 
     def test_open_with_xarray(self):
-        algeciras_pe_waves = self.product
-        c = Catalog(algeciras_pe_waves)
-        dataset = c.datasets[0]
-        ds = dataset.open_xarray_conn()
+        catalog = Catalog(self.product)
+        ds = catalog.open_xarray_conn()
         self.assertIsNotNone(ds)
         ds.close()
 
