@@ -255,7 +255,7 @@ class Catalog(object):
 
         list_conn = [dataset.opendap_url for dataset in self.datasets]
         logger.debug(f"opening: {','.join(list_conn)}")
-        ds = xarray.open_mfdataset(list_conn)
+        ds = xarray.open_mfdataset(list_conn, compat="override", combine="nested")
         if dates:
             start = dates["start"] if "start" in dates else None
             end = dates["end"] if "end" in dates else None

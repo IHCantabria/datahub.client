@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.8.0
+- Open all datasets in a catalog using xarray
 ## 0.7.3
 - Fix lxml dependency
 ## 0.7.2
