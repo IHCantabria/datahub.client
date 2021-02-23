@@ -5,12 +5,12 @@ import os
 import requests
 
 
-def datetime_to_string(date_obj):
-    return date_obj.strftime("%Y-%m-%dT%H:%M:%SZ")
+def datetime_to_string(date_obj, format="%Y-%m-%dT%H:%M:%SZ"):
+    return date_obj.strftime(format)
 
 
-def string_to_datetime(str_date):
-    return datetime.strptime(str_date, "%Y-%m-%dT%H:%M:%SZ")
+def string_to_datetime(str_date, format="%Y-%m-%dT%H:%M:%SZ"):
+    return datetime.strptime(str_date, format)
 
 
 def get_logger(name):
