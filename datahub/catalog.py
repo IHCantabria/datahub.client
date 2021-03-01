@@ -169,20 +169,35 @@ class Catalog(object):
         logger.info(f"{len(points)} points found")
         return points
 
-    def download(self, coordinates, dates, variables, filename, formato="netcdf"):
+    def download(
+        self, filename, variables, coordinates=None, dates=None, formato="netCDF4"
+    ):
         datasets_for_download = self._get_datasets_with_data(dates)
         filenames = []
         if len(datasets_for_download) > 1:
+
             for i, dataset in enumerate(datasets_for_download):
                 name = dataset.download(
-                    coordinates, dates, variables, f"{filename}{i}", formato
+                    f"{filename}{i}", variables, coordinates, dates, formato
                 )
                 filenames.append(name)
+            ds = xarray.open_mfdataset(filenames, compat="override", combine="nested")
+            ds.to_netcdf(filename, mode="w", format="NETCDF4")
+            for name in filenames:
+                os.remove(name)
+            filenames = [filename]
+
         elif len(datasets_for_download) > 0:
             dataset = datasets_for_download[0]
-            name = dataset.download(coordinates, dates, variables, filename, formato)
+            name = dataset.download(
+                filename,
+                variables,
+                coordinates=coordinates,
+                dates=dates,
+                formato=formato,
+            )
             filenames.append(name)
-        if formato == "netcdf" and len(coordinates.keys()) == 2:
+        if formato == "netcdf" and coordinates and len(coordinates.keys()) == 2:
             self._fix_netcdf(filename, variables, dates)
         logger.info("downloaded completed in {names}".format(names=",".join(filenames)))
         return filenames
@@ -222,8 +237,6 @@ class Catalog(object):
     def _get_datasets_with_data(self, dates):
         dataset_ok = []
         for dataset in self.datasets:
-            start_dataset = dataset.dates["start"]
-            end_dataset = dataset.dates["end"]
             try:
                 if not dates:
                     dataset_ok.append(dataset)
