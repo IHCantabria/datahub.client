@@ -132,7 +132,7 @@ class Dataset(object):
         return value
 
     def download(
-        self, filename, variables, coordinates=None, dates=None, formato="netcdf"
+        self, filename, variables, coordinates=None, dates=None, formato="netCDF4"
     ):
         ncss_coordinates = self._coordinates_to_string(coordinates)
         name_variables = self._get_name_variables(variables)
