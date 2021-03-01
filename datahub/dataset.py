@@ -160,11 +160,15 @@ class Dataset(object):
         start = ""
         end = ""
         if not dates:
-            return ""
+            return f"&time_start={utils.datetime_to_string(self.dates['start'])}&time_end={utils.datetime_to_string(self.dates['end'])}"
         if dates["start"]:
             start = f"&time_start={utils.datetime_to_string(dates['start'])}"
+        else:
+            start = f"&time_start={utils.datetime_to_string(self.dates['start'])}"
         if dates["end"]:
             end = f"&time_end={utils.datetime_to_string(dates['end'])}"
+        else:
+            end = f"&time_end={utils.datetime_to_string(self.dates['end'])}"
         return f"{start}{end}"
 
     def _get_name_variables(self, variables):
@@ -178,7 +182,7 @@ class Dataset(object):
     def _coordinates_to_string(self, coordinates):
         text = ""
         if not coordinates:
-            return text
+            coordinates = self.extent
         if "lat" in coordinates:
             text = f"&longitude={coordinates['lon']}&latitude={coordinates['lat']}"
         else:
