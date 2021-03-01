@@ -54,7 +54,7 @@ class TestCatalog(unittest.TestCase):
         c = Catalog(self.product)
         variables = self.product.variables
         filenames = c.latest.download(
-            self.coordinates_area, self.dates, variables, filename
+            filename, variables, coordinates=self.coordinates_area, dates=self.dates
         )
         dataset = xarray.open_dataset(filename)
         self.assertIsNotNone(dataset)
@@ -72,7 +72,10 @@ class TestCatalog(unittest.TestCase):
         c = Catalog(self.product)
         variables = self.product.variables
         filenames = c.latest.download(
-            self.coordinates_point, self.dates, variables, filename
+            filename,
+            variables,
+            coordinates=self.coordinates_point,
+            dates=self.dates,
         )
 
         dataset = xarray.open_dataset(filename)
@@ -85,7 +88,11 @@ class TestCatalog(unittest.TestCase):
         c = Catalog(self.product)
         variables = self.product.variables
         filenames = c.latest.download(
-            self.coordinates_point, self.dates, variables, filename, "csv"
+            filename,
+            variables,
+            coordinates=self.coordinates_point,
+            dates=self.dates,
+            formato="csv",
         )
         self.assertIn(filename, filenames)
 

@@ -97,14 +97,14 @@ class Dataset(object):
         points = []
         name_variables = self._get_name_variables(variables)
 
-        time_start, time_end = self.__create_time_string_ncss(dates)
+        # time_start, time_end = self.__create_time_string_ncss(dates)
+        period = self._get_time_start_end(dates)
 
-        ncssUrl = "{url}?var={vars}{coordinates}{time_start}{time_end}&accept={format}".format(
+        ncssUrl = "{url}?{vars}{coordinates}{period}&accept={format}".format(
             url=self.ncss_url,
             vars=name_variables,
             coordinates=ncss_coordinates,
-            time_start=time_start,
-            time_end=time_end,
+            period=period,
             format="xml",
         )
         response = requests.get(ncssUrl, auth=self.auth)
@@ -131,16 +131,17 @@ class Dataset(object):
                     value = float(value) + variable.offset
         return value
 
-    def download(self, coordinates, dates, variables, filename, formato="netcdf"):
+    def download(
+        self, filename, variables, coordinates=None, dates=None, formato="netcdf"
+    ):
         ncss_coordinates = self._coordinates_to_string(coordinates)
         name_variables = self._get_name_variables(variables)
-
-        ncssUrl = "{url}?var={vars}{coordinates}&time_start={start}&time_end={end}&accept={format}".format(
+        period = self._get_time_start_end(dates)
+        ncssUrl = "{url}?{vars}{coordinates}{period}&accept={format}".format(
             url=self.ncss_url,
             vars=name_variables,
             coordinates=ncss_coordinates,
-            start=utils.datetime_to_string(dates["start"]),
-            end=utils.datetime_to_string(dates["end"]),
+            period=period,
             format=formato,
         )
         logger.debug(f"ncssUrl={ncssUrl}")
@@ -155,16 +156,29 @@ class Dataset(object):
 
         return local_path
 
+    def _get_time_start_end(self, dates):
+        start = ""
+        end = ""
+        if not dates:
+            return ""
+        if dates["start"]:
+            start = f"&time_start={utils.datetime_to_string(dates['start'])}"
+        if dates["end"]:
+            end = f"&time_end={utils.datetime_to_string(dates['end'])}"
+        return f"{start}{end}"
+
     def _get_name_variables(self, variables):
         nameShort = []
         for variable in variables:
             nameShort.append(variable.nameShort)
         complete_name_short = ",".join(nameShort)
         logger.debug(f"name short={complete_name_short}")
-        return complete_name_short
+        return f"var={complete_name_short}"
 
     def _coordinates_to_string(self, coordinates):
         text = ""
+        if not coordinates:
+            return text
         if "lat" in coordinates:
             text = f"&longitude={coordinates['lon']}&latitude={coordinates['lat']}"
         else:
