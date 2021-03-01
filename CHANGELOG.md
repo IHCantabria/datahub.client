@@ -1,7 +1,13 @@
 # Changelog
 
+### 0.8.2
+- Download multiples files from catalog and merge them into one
+- Dates and extent is optional for download datsets
+- Default format is netCDF4 now.
+
 ### 0.8.1
 - Add optional `format` parameter for `datetime_to_string` and `string_to_datetime` functions.
+  
 ## 0.8.0
 - Open all datasets in a catalog using xarray
 ## 0.7.3
