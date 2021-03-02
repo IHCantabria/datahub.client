@@ -54,7 +54,11 @@ class TestCatalog(unittest.TestCase):
         c = Catalog(self.product)
         variables = self.product.variables
         filenames = c.latest.download(
-            filename, variables, coordinates=self.coordinates_area, dates=self.dates
+            filename,
+            variables,
+            coordinates=self.coordinates_area,
+            dates=self.dates,
+            formato="netcdf",
         )
         dataset = xarray.open_dataset(filename)
         self.assertIsNotNone(dataset)
