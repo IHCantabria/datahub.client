@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.8.3
+- Fix `get_by_product_filtered_by_name`.
+  
 ### 0.8.2
 - Download multiples files from catalog and merge them into one
 - Dates and extent is optional for download datsets
