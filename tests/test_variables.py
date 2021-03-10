@@ -1,5 +1,6 @@
 import unittest
 from datahub.variables import Variables
+from datahub.products import Products
 
 
 class TestVariables(unittest.TestCase):
@@ -27,7 +28,7 @@ class TestVariables(unittest.TestCase):
 
     def test_get_by_product_filtered_by_name(self):
         names = ["thetao", "so"]
-        product = {"id": 7}
+        product = Products().get(7)
         variables = Variables()
         filtered_variables = variables.get_by_product_filtered_by_name(product, names)
         n = len(filtered_variables)
