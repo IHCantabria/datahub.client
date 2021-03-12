@@ -183,6 +183,7 @@ class Catalog(object):
                 filenames.append(name)
             ds = xarray.open_mfdataset(filenames, compat="override", combine="nested")
             ds.to_netcdf(filename, mode="w", format="NETCDF4")
+            ds.close()
             for name in filenames:
                 os.remove(name)
             filenames = [filename]

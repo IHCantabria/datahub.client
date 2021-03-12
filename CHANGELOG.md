@@ -1,5 +1,7 @@
 # Changelog
 
+### 0.8.4
+- Fix close dataset. This error was only on Windows.
 ### 0.8.3
 - Fix `get_by_product_filtered_by_name`.
   
