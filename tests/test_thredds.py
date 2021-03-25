@@ -125,6 +125,22 @@ class TestCatalog(unittest.TestCase):
     #     protected = c.is_protected
     #     self.assertTrue(protected)
 
+    def test_download_multiples_files(self):
+        expected_result = 90
+
+        product_id = 198
+        product = Products().get(product_id)
+        c = Catalog(product)
+        dates = {
+            "end": c.datasets[0].dates["end"],
+            "start": c.datasets[-1].dates["start"],
+        }
+        filename = "/tmp/test_download_multiples_files.nc"
+        c.download(filename, product.variables, dates=dates, formato="netcdf")
+        ds = xarray.open_dataset(filename)
+        time_len = len(ds["time"])
+        self.assertEqual(time_len, expected_result)
+
 
 if __name__ == "__main__":
     unittest.main()
