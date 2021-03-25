@@ -1,5 +1,7 @@
 # Changelog
 
+### 0.8.5
+- Fix join multiples datasets in `catalog.download`.
 ### 0.8.4
 - Fix close dataset. This error was only on Windows.
 ### 0.8.3
