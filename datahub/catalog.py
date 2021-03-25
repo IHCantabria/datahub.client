@@ -169,6 +169,22 @@ class Catalog(object):
         logger.info(f"{len(points)} points found")
         return points
 
+    def _join_datasets(self, filenames):
+        ds_files = []
+        for filename in filenames:
+            ds = xarray.open_dataset(filename)
+            ds_files.append(ds)
+
+        ds_result = ds_files[0]
+
+        time_var = "t" if "t" in ds_result else "time"
+        for ds in ds_files[1:]:
+            start = datetime(1900, 1, 1)
+            end = ds_result[time_var][0]
+            ds_cut = ds.sel(time=slice(start, end))
+            ds_result = xarray.concat([ds_cut, ds_result], dim=time_var)
+        return ds_result
+
     def download(
         self, filename, variables, coordinates=None, dates=None, formato="netCDF4"
     ):
@@ -181,7 +197,7 @@ class Catalog(object):
                     f"{filename}{i}", variables, coordinates, dates, formato
                 )
                 filenames.append(name)
-            ds = xarray.open_mfdataset(filenames, compat="override", combine="nested")
+            ds = self._join_datasets(filenames)
             ds.to_netcdf(filename, mode="w", format="NETCDF4")
             ds.close()
             for name in filenames:
