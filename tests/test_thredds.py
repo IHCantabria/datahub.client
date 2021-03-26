@@ -126,7 +126,7 @@ class TestCatalog(unittest.TestCase):
     #     self.assertTrue(protected)
 
     def test_download_multiples_files(self):
-        expected_result = 90
+        expected_result = 87
 
         product_id = 198
         product = Products().get(product_id)

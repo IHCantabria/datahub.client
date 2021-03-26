@@ -179,9 +179,8 @@ class Catalog(object):
 
         time_var = "t" if "t" in ds_result else "time"
         for ds in ds_files[1:]:
-            start = datetime(1900, 1, 1)
-            end = ds_result[time_var][0]
-            ds_cut = ds.sel(time=slice(start, end))
+            end = ds_result[time_var][0] - 1
+            ds_cut = ds.sel(time=slice(None, end))
             ds_result = xarray.concat([ds_cut, ds_result], dim=time_var)
         return ds_result
 
