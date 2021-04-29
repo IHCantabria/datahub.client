@@ -30,6 +30,7 @@ pylint==2.5.2
 pyparsing==2.4.7
 pytest==5.4.2
 pytest-sugar==0.9.3
+python-dotenv==0.17.0
 radon==4.1.0
 regex==2020.5.14
 requests==2.23.0
