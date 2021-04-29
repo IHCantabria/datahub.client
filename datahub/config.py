@@ -1,6 +1,8 @@
 import json
 import os
 
+from dotenv import dotenv_values
+
 from datahub import utils
 
 logger = utils.get_logger(__name__)
@@ -9,7 +11,9 @@ logger = utils.get_logger(__name__)
 class Config(object):
     def __init__(self):
         try:
-            with open(f"{os.path.dirname(__file__)}/config.json") as f:
+            with open(
+                f"{os.path.dirname(__file__)}/config.{dotenv_values('.env')['ENV']}.json"
+            ) as f:
                 data = json.load(f)
                 self.URLs = data["URLs"]
                 self.__restrictAccess = data["restrictAccess"]
