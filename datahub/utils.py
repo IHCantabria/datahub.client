@@ -1,4 +1,5 @@
 from datetime import datetime
+from dotenv import dotenv_values
 import logging
 import logging.config
 import os
@@ -14,7 +15,9 @@ def string_to_datetime(str_date, format="%Y-%m-%dT%H:%M:%SZ"):
 
 
 def get_logger(name):
-    config_ini = f"{os.path.dirname(__file__)}/logging.ini"
+    config_ini = (
+        f"{os.path.dirname(__file__)}/logging.{dotenv_values('.env')['ENV']}.ini"
+    )
     logging.config.fileConfig(config_ini)
     logger = logging.getLogger(name)
     return logger
