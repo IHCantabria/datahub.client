@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.0
+- Use the `.env` file to find out what environment it is in and where to record the log.
+- Change `setup.py` to `pyproject.toml`
 ### 0.8.6
 - Fix join multiples datasets in `catalog.download`.
 - Fix error in 0.8.5
