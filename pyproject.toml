@@ -1,0 +1,12 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "datahub"
+author = "Felipe Maza"
+author-email = "felipe.maza@unican.es"
+home-page = "https://github.com/IHCantabria/datahub.client"
+classifiers = [ "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",]
+description-file = "README.md"
+
