@@ -1,8 +1,8 @@
 {
   "URLs": {
-    "products": "https://datahubdes.ihcantabria.com/v1/public/Products",
-    "product_variables": "https://datahubdes.ihcantabria.com/v1/public/Products/{id_product}/Variables",
-    "variables": "https://datahubdes.ihcantabria.com/v1/public/Variables"
+    "products": "https://datahub.ihcantabria.com/v1/public/Products",
+    "product_variables": "https://datahub.ihcantabria.com/v1/public/Products/{id_product}/Variables",
+    "variables": "https://datahub.ihcantabria.com/v1/public/Variables"
   },
   "restrictAccess": [
     {
