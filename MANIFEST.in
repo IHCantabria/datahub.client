@@ -1,5 +1,6 @@
 include README.md
 include requirements.txt
-include config.json
-include datahub/config.json
-include datahub/logging.ini
+include datahub/config.dev.json
+include datahub/config.prod.json
+include datahub/logging.dev.ini
+include datahub/logging.prod.json
