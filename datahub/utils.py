@@ -19,8 +19,9 @@ def get_logger(name):
     config_ini = (
         f"{os.path.dirname(__file__)}/logging.{dotenv_values('.env')['ENV']}.ini"
     )
-    logging.config.fileConfig(config_ini)
-    logging.FileHandler(dotenv_values(".env")["DATAHUB_LOG"], "a")
+    logging.config.fileConfig(
+        config_ini, defaults={"logfilename": dotenv_values(".env")["DATAHUB_LOG"]}
+    )
     logger = logging.getLogger(name)
     return logger
 
