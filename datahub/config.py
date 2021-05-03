@@ -11,12 +11,19 @@ logger = utils.get_logger(__name__)
 class Config(object):
     def __init__(self):
         try:
-            with open(
-                f"{os.path.dirname(__file__)}/config.{dotenv_values('.env')['ENV']}.json"
-            ) as f:
-                data = json.load(f)
-                self.URLs = data["URLs"]
-                self.__restrictAccess = data["restrictAccess"]
+
+            self.URLs = {
+                "products": "{url}/v1/public/Products".format(
+                    url=dotenv_values(".env")["DATAHUB_API_URL"]
+                ),
+                "product_variables": dotenv_values(".env")["DATAHUB_API_URL"]
+                + "/v1/public/Products/{id_product}/Variables",
+                "variables": "{url}/v1/public/Variables".format(
+                    url=dotenv_values(".env")["DATAHUB_API_URL"]
+                ),
+            }
+
+            self.__restrictAccess = json.loads(dotenv_values(".env")["SECRET_AUTH"])
         except Exception as ex:
             logger.error(ex)
 
