@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.9.1
+- Add enconding to compress netCDF4.
 ## 0.9.0
 - Use the `.env` file to find out what environment it is in and where to record the log.
 - Change `setup.py` to `pyproject.toml`
