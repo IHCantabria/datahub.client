@@ -193,11 +193,11 @@ class Catalog(object):
 
             for i, dataset in enumerate(datasets_for_download):
                 name = dataset.download(
-                    f"{filename}{i}", variables, coordinates, dates, formato
+                    f"{filename}{i}.nc", variables, coordinates, dates, formato
                 )
                 filenames.append(name)
             ds = self._join_datasets(filenames)
-            ds.to_netcdf(filename, mode="w", format="NETCDF4")
+            self._to_netcdf(ds, filename)
             ds.close()
             for name in filenames:
                 os.remove(name)
@@ -244,11 +244,17 @@ class Catalog(object):
             ] = f"hours since {dates['start']}"
 
         renamed = dataset.swap_dims({"obs": "time"})
-        renamed.to_netcdf(f"{filename}-new.nc")
+        self.to_netcdf(renamed, f"{filename}-new.nc")
 
         os.remove(filename)
         os.rename(f"{filename}-new.nc", filename)
         logger.debug("netcdf is fixed")
+
+    def _to_netcdf(self, ds, filename):
+        comp = dict(zlib=True, complevel=4)
+        encoding = {var: comp for var in ds.data_vars}
+
+        ds.to_netcdf(filename, mode="w", format="NETCDF4", encoding=encoding)
 
     def _get_datasets_with_data(self, dates):
         dataset_ok = []
@@ -284,7 +290,9 @@ class Catalog(object):
 
         list_conn = [dataset.opendap_url for dataset in self.datasets]
         logger.debug(f"opening: {','.join(list_conn)}")
-        ds = xarray.open_mfdataset(list_conn, compat="override", combine="nested")
+
+        ds = self._join_datasets(list_conn)
+        # ds = self._join_datasets(list_conn)
         if dates:
             start = dates["start"] if "start" in dates else None
             end = dates["end"] if "end" in dates else None
