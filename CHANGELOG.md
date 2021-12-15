@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.9.2
+- Fix SECRET_AUTH env key is not required.
 ## 0.9.1
 - Add enconding to compress netCDF4.
 ## 0.9.0

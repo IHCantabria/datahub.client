@@ -22,10 +22,15 @@ class Config(object):
                     url=dotenv_values(".env")["DATAHUB_API_URL"]
                 ),
             }
-
-            self.__restrictAccess = json.loads(dotenv_values(".env")["SECRET_AUTH"])
+            try:
+                self.__restrictAccess = json.loads(
+                    dotenv_values(".env")["DATAHUB_SECRET_AUTH"]
+                )
+            except:
+                self.__restrictAccess = []
         except Exception as ex:
             logger.error(ex)
+            raise
 
     def get_auth_for_catalog(self, catalog_id):
         for auth in self.__restrictAccess:
