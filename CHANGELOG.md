@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.3
+- Fix load env values
+
 ## 0.9.2
 - Fix SECRET_AUTH env key is not required.
 ## 0.9.1

@@ -1,8 +1,6 @@
 import json
 import os
 
-from dotenv import dotenv_values
-
 from datahub import utils
 
 logger = utils.get_logger(__name__)
@@ -11,20 +9,19 @@ logger = utils.get_logger(__name__)
 class Config(object):
     def __init__(self):
         try:
-
             self.URLs = {
                 "products": "{url}/v1/public/Products".format(
-                    url=dotenv_values(".env")["DATAHUB_API_URL"]
+                    url=os.environ.get("DATAHUB_API_URL")
                 ),
-                "product_variables": dotenv_values(".env")["DATAHUB_API_URL"]
+                "product_variables": os.environ.get("DATAHUB_API_URL")
                 + "/v1/public/Products/{id_product}/Variables",
                 "variables": "{url}/v1/public/Variables".format(
-                    url=dotenv_values(".env")["DATAHUB_API_URL"]
+                    url=os.environ.get("DATAHUB_API_URL")
                 ),
             }
             try:
                 self.__restrictAccess = json.loads(
-                    dotenv_values(".env")["DATAHUB_SECRET_AUTH"]
+                    os.environ.get("DATAHUB_SECRET_AUTH")
                 )
             except:
                 self.__restrictAccess = []
