@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from io import StringIO
 import json
 import math
+import numpy as np
 import os
 import requests
 import urllib.request
@@ -286,27 +287,72 @@ class Catalog(object):
         logger.debug(f"coordinates={coordinates}")
         return text
 
-    def open_xarray_conn(self, dates=None, extent=None):
+    def open_xarray_conn(self, dates=None, extent=None, method=None):
+
+        if method and method == "outside" and not extent:
+            raise Exception(f"Outside method requires an extent")
 
         list_conn = [dataset.opendap_url for dataset in self.datasets]
         logger.debug(f"opening: {','.join(list_conn)}")
 
         ds = self._join_datasets(list_conn)
-        # ds = self._join_datasets(list_conn)
         if dates:
             start = dates["start"] if "start" in dates else None
             end = dates["end"] if "end" in dates else None
             if "time" in ds.dims:
+                if method == "outside" and start:
+                    start = (
+                        start
+                        - np.diff(ds["time"].values)
+                        .max()
+                        .astype("timedelta64[s]")
+                        .item()
+                    )
+                    end = (
+                        end
+                        + np.diff(ds["time"].values)
+                        .max()
+                        .astype("timedelta64[s]")
+                        .item()
+                    )
                 ds = ds.sel(time=slice(start, end))
             elif "t" in ds.dims:
+                if method == "outside" and start:
+                    start = (
+                        start
+                        - np.diff(ds["t"].values).max().astype("timedelta64[s]").item()
+                    )
+                    end = (
+                        end
+                        + np.diff(ds["t"].values).max().astype("timedelta64[s]").item()
+                    )
                 ds = ds.sel(t=slice(start, end))
         if extent:
-            if "longitud" in ds.dims:
+
+            if "longitude" in ds.dims:
+                if method == "outside":
+                    extent["west"] = (
+                        extent["west"] - np.diff(ds["longitude"].values).max()
+                    )
+                    extent["east"] = (
+                        extent["east"] - np.diff(ds["longitude"].values).max()
+                    )
+                    extent["south"] = (
+                        extent["south"] - np.diff(ds["latitude"].values).max()
+                    )
+                    extent["north"] = (
+                        extent["north"] - np.diff(ds["latitude"].values).max()
+                    )
                 ds = ds.sel(
                     longitude=slice(extent["west"], extent["east"]),
                     latitude=slice(extent["south"], extent["north"]),
                 )
             elif "lon" in ds.dims:
+                if method == "outside":
+                    extent["west"] = extent["west"] - np.diff(ds["lon"].values).max()
+                    extent["east"] = extent["east"] - np.diff(ds["lon"].values).max()
+                    extent["south"] = extent["south"] - np.diff(ds["lat"].values).max()
+                    extent["north"] = extent["north"] - np.diff(ds["lat"].values).max()
                 ds = ds.sel(
                     lon=slice(extent["west"], extent["east"]),
                     lat=slice(extent["south"], extent["north"]),

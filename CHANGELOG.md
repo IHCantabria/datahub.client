@@ -1,4 +1,9 @@
 # Changelog
+## 0.9.3
+- Fix extent in `open_xarray_conn`.
+- Fix load env values.
+- Fix assert in filter test.
+- Add parameter `method=outside` to `open_xarray_conn`.
 
 ## 0.9.2
 - Fix SECRET_AUTH env key is not required.
