@@ -1,4 +1,7 @@
 # Changelog
+
+## 0.9.4
+- Fix errors loading environment variables
 ## 0.9.3
 - Fix extent in `open_xarray_conn`.
 - Fix load env values.
