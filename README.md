@@ -1,7 +1,10 @@
 # Datahub.client
 
-datahub.client is a python library to make it easy to query datahub and obtain data stored in thredds.
+datahub.client is a python library to make it easy to query datahub and obtain data stored in thredds.  
 
+```diff
+- Important! This repository is out maintenance
+```
 
 ## Implemented features
 
