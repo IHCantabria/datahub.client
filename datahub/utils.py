@@ -15,13 +15,13 @@ def string_to_datetime(str_date, format="%Y-%m-%dT%H:%M:%SZ"):
 
 
 def get_logger(name):
-
-    config_ini = (
-        f"{os.path.dirname(__file__)}/logging.{dotenv_values('.env')['ENV']}.ini"
-    )
-    logging.config.fileConfig(
-        config_ini, defaults={"logfilename": dotenv_values(".env")["DATAHUB_LOG"]}
-    )
+    try:
+        config_ini = f"{os.path.dirname(__file__)}/logging.{os.environ.get('ENV')}.ini"
+        logging.config.fileConfig(
+            config_ini, defaults={"logfilename": os.environ.get("DATAHUB_LOG")}
+        )
+    except Exception as e:
+        pass
     logger = logging.getLogger(name)
     return logger
 
